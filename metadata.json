@@ -1,0 +1,6 @@
+{
+  "name": "Pixel Leap - 2D Platformer Adventure",
+  "description": "Game platformer seru dan responsif dengan Tailwind CSS dan Alpine.js: lompat, kumpulkan koin, hindari rintangan, dan selesaikan berbagai level menantang!",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
