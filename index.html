@@ -1,2427 +1,2356 @@
 <!doctype html>
 <html lang="id" class="h-full bg-slate-950 text-slate-100 select-none">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Pixel Leap - 2D Platformer Adventure</title>
-    <meta name="description" content="Game platformer seru dan responsif dengan Tailwind CSS dan Alpine.js: lompat, kumpulkan koin, hindari rintangan, dan selesaikan berbagai level menantang!" />
-    <meta property="og:title" content="Pixel Leap - 2D Platformer Adventure" />
-    <meta property="og:description" content="Game platformer seru dan responsif dengan Tailwind CSS dan Alpine.js: lompat, kumpulkan koin, hindari rintangan, dan selesaikan berbagai level menantang!" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Pixel Leap - 2D Platformer Adventure</title>
+  <meta name="description"
+    content="Game platformer seru dan responsif dengan Tailwind CSS dan Alpine.js: lompat, kumpulkan koin, hindari rintangan, dan selesaikan berbagai level menantang!" />
+  <meta property="og:title" content="Pixel Leap - 2D Platformer Adventure" />
+  <meta property="og:description"
+    content="Game platformer seru dan responsif dengan Tailwind CSS dan Alpine.js: lompat, kumpulkan koin, hindari rintangan, dan selesaikan berbagai level menantang!" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Tailwind CSS CDN for full standalone compatibility -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              pixel: ['"Press Start 2P"', 'monospace'],
-              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            },
-            colors: {
-              retro: {
-                yellow: '#FACC15',
-                cyan: '#06B6D4',
-                purple: '#8B5CF6',
-                pink: '#EC4899',
-                green: '#10B981',
-                orange: '#F97316',
-                dark: '#0F172A',
-              }
-            },
-            animation: {
-              'bounce-slow': 'bounce 2s infinite',
-              'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'float': 'float 3s ease-in-out infinite',
-            },
-            keyframes: {
-              float: {
-                '0%, 100%': { transform: 'translateY(0px)' },
-                '50%': { transform: 'translateY(-8px)' },
-              }
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN for full standalone compatibility -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            pixel: ['"Press Start 2P"', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            retro: {
+              yellow: '#FACC15',
+              cyan: '#06B6D4',
+              purple: '#8B5CF6',
+              pink: '#EC4899',
+              green: '#10B981',
+              orange: '#F97316',
+              dark: '#0F172A',
+            }
+          },
+          animation: {
+            'bounce-slow': 'bounce 2s infinite',
+            'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 3s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
             }
           }
         }
       }
-    </script>
+    }
+  </script>
 
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
-    <style>
-      [x-cloak] { display: none !important; }
-      
-      /* Disable default gestures and mobile selections */
-      * {
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-      }
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
 
-      /* Retro scanline overlay effect */
-      .scanlines {
-        background: linear-gradient(
-          rgba(18, 16, 16, 0) 50%, 
-          rgba(0, 0, 0, 0.25) 50%
-        ), linear-gradient(
-          90deg,
+    /* Disable default gestures and mobile selections */
+    * {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Retro scanline overlay effect */
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg,
           rgba(255, 0, 0, 0.03),
           rgba(0, 255, 0, 0.01),
-          rgba(0, 0, 255, 0.03)
-        );
-        background-size: 100% 4px, 6px 100%;
-        pointer-events: none;
-      }
+          rgba(0, 0, 255, 0.03));
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
 
-      /* Pixel rendering for game canvas */
-      canvas {
-        image-rendering: -moz-crisp-edges;
-        image-rendering: -webkit-crisp-edges;
-        image-rendering: pixelated;
-        image-rendering: crisp-edges;
-      }
+    /* Pixel rendering for game canvas */
+    canvas {
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
 
-      /* Touch button styles */
-      .touch-btn {
-        touch-action: manipulation;
-        transition: transform 0.06s ease, background-color 0.1s ease;
-      }
-      .touch-btn:active {
-        transform: scale(0.92);
-      }
-    </style>
-  </head>
-  <body 
-    x-data="platformerApp()" 
-    x-init="init()" 
-    class="h-full w-full bg-slate-950 overflow-hidden font-sans flex flex-col justify-between"
-    @keydown.window="handleKeyDown($event)"
-    @keyup.window="handleKeyUp($event)"
-    @resize.window="onResize()"
-  >
-    <!-- Background subtle retro grid -->
-    <div class="fixed inset-0 pointer-events-none opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    /* Touch button styles */
+    .touch-btn {
+      touch-action: manipulation;
+      transition: transform 0.06s ease, background-color 0.1s ease;
+    }
 
-    <!-- Optional scanline overlay -->
-    <div x-show="settings.scanlines" class="fixed inset-0 scanlines z-40"></div>
+    .touch-btn:active {
+      transform: scale(0.92);
+    }
+  </style>
+</head>
 
-    <!-- MAIN CONTAINER -->
-    <div class="relative w-full h-full flex flex-col max-w-7xl mx-auto overflow-hidden">
+<body x-data="platformerApp()" x-init="init()"
+  class="h-full w-full bg-slate-950 overflow-hidden font-sans flex flex-col justify-between"
+  @keydown.window="handleKeyDown($event)" @keyup.window="handleKeyUp($event)" @resize.window="onResize()">
+  <!-- Background subtle retro grid -->
+  <div
+    class="fixed inset-0 pointer-events-none opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]">
+  </div>
 
-      <!-- TOP HEADER / NAV BAR -->
-      <header class="w-full px-3 py-2 sm:px-6 sm:py-3 z-30 flex items-center justify-between border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md">
-        <!-- Logo / Title -->
-        <div class="flex items-center gap-2 cursor-pointer" @click="goToScreen('start')">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-pixel text-xs sm:text-sm border border-cyan-400/40">
-            ▲
+  <!-- Optional scanline overlay -->
+  <div x-show="settings.scanlines" class="fixed inset-0 scanlines z-40"></div>
+
+  <!-- MAIN CONTAINER -->
+  <div class="relative w-full h-full flex flex-col max-w-7xl mx-auto overflow-hidden">
+
+    <!-- TOP HEADER / NAV BAR -->
+    <header
+      class="w-full px-3 py-2 sm:px-6 sm:py-3 z-30 flex items-center justify-between border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md">
+      <!-- Logo / Title -->
+      <div class="flex items-center gap-2 cursor-pointer" @click="goToScreen('start')">
+        <div
+          class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-pixel text-xs sm:text-sm border border-cyan-400/40">
+          ▲
+        </div>
+        <div>
+          <h1
+            class="font-pixel text-xs sm:text-sm tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-300">
+            PIXEL LEAP
+          </h1>
+          <span class="text-[10px] text-slate-400 font-medium hidden sm:inline-block">2D Platformer Adventure</span>
+        </div>
+        <a href=" http://rpl2.gamer.gd/login.php" class="text-xl font-bold" target="_blank"
+          rel="noopener noreferrer">Login</a>
+      </div>
+
+      <!-- In-Game Stats Header (Visible during playing/paused) -->
+      <template x-if="screen === 'playing' || screen === 'paused'">
+        <div class="flex items-center gap-3 sm:gap-6 font-pixel text-[11px] sm:text-xs">
+          <!-- Hearts / HP -->
+          <div
+            class="flex items-center gap-1 bg-slate-800/80 px-2 sm:px-3 py-1.5 rounded-lg border border-slate-700/60 shadow-inner">
+            <template x-for="i in maxLives" :key="i">
+              <span class="transition-transform duration-150 inline-block"
+                :class="i <= lives ? 'text-red-500 scale-100' : 'text-slate-600 scale-90'">
+                ❤
+              </span>
+            </template>
           </div>
-          <div>
-            <h1 class="font-pixel text-xs sm:text-sm tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-300">
+
+          <!-- Coins -->
+          <div
+            class="flex items-center gap-1.5 bg-slate-800/80 px-2 sm:px-3 py-1.5 rounded-lg border border-slate-700/60 text-yellow-400">
+            <span class="text-sm">🪙</span>
+            <span x-text="coins + '/' + totalLevelCoins"></span>
+          </div>
+
+          <!-- Score -->
+          <div
+            class="hidden md:flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-cyan-300">
+            <span class="text-slate-400">SKOR:</span>
+            <span x-text="score"></span>
+          </div>
+
+          <!-- Timer -->
+          <div
+            class="flex items-center gap-1 bg-slate-800/80 px-2 sm:px-3 py-1.5 rounded-lg border border-slate-700/60 text-slate-200">
+            <span class="text-xs">⏱</span>
+            <span x-text="formatTime(levelTimer)"></span>
+          </div>
+        </div>
+      </template>
+
+      <!-- Header Actions -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Sound Toggle -->
+        <button @click="toggleAudio()"
+          class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 transition-colors flex items-center gap-1"
+          :title="settings.sound ? 'Matikan Suara' : 'Nyalakan Suara'">
+          <span x-text="settings.sound ? '🔊' : '🔇'"></span>
+          <span class="hidden md:inline text-[11px]" x-text="settings.sound ? 'Audio Aktif' : 'Bisu'"></span>
+        </button>
+
+        <!-- BGM Toggle -->
+        <button @click="toggleBgm()"
+          class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs transition-colors flex items-center gap-1"
+          :class="settings.music ? 'text-cyan-400 border-cyan-500/40' : 'text-slate-400'"
+          :title="settings.music ? 'Matikan Musik' : 'Nyalakan Musik'">
+          <span>🎵</span>
+          <span class="hidden md:inline text-[11px]" x-text="settings.music ? 'BGM' : 'BGM Off'"></span>
+        </button>
+
+        <!-- Pause / Menu Toggle when playing -->
+        <template x-if="screen === 'playing'">
+          <button @click="pauseGame()"
+            class="px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-pixel text-[10px] sm:text-xs transition-all active:scale-95">
+            ⏸ JEDA
+          </button>
+        </template>
+
+        <!-- Settings Button -->
+        <button @click="openModal('settings')"
+          class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 transition-colors"
+          title="Pengaturan">
+          ⚙️
+        </button>
+      </div>
+    </header>
+
+    <!-- CANVAS & GAMEPLAY VIEWPORT -->
+    <main class="relative flex-1 w-full flex items-center justify-center bg-slate-950 overflow-hidden p-1 sm:p-3">
+      <!-- The Game Canvas -->
+      <div class="relative w-full h-full flex items-center justify-center">
+        <canvas id="gameCanvas"
+          class="w-full h-full object-contain rounded-xl shadow-2xl border border-slate-800/80 bg-slate-900"
+          style="touch-action: none;"></canvas>
+
+        <!-- SCREEN: START MENU -->
+        <div x-show="screen === 'start'" x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+          class="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div
+            class="max-w-md w-full bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-cyan-900/30 text-center relative overflow-hidden">
+            <!-- Glow accent -->
+            <div class="absolute -top-16 -left-16 w-32 h-32 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div
+              class="absolute -bottom-16 -right-16 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+
+            <!-- Badge -->
+            <div
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-4">
+              <span class="animate-pulse">●</span> Retro 2D Platformer
+            </div>
+
+            <!-- Main Game Title -->
+            <h2
+              class="font-pixel text-xl sm:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-400 mb-2 tracking-wider">
               PIXEL LEAP
-            </h1>
-            <span class="text-[10px] text-slate-400 font-medium hidden sm:inline-block">2D Platformer Adventure</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 mb-6">
+              Jelajahi dunia pulau melayang, kumpulkan koin emas, kalahkan monster slime, dan capai portal kemenangan!
+            </p>
+
+            <!-- Selected Hero Preview Badge -->
+            <div
+              class="mb-5 p-3 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow"
+                  :style="'background-color: ' + currentHero.color">
+                  <span x-text="currentHero.icon"></span>
+                </div>
+                <div class="text-left">
+                  <div class="text-xs font-bold text-white" x-text="currentHero.name"></div>
+                  <div class="text-[11px] text-cyan-400" x-text="currentHero.specialDesc"></div>
+                </div>
+              </div>
+              <button @click="goToScreen('characterSelect')"
+                class="text-xs px-2.5 py-1 rounded-md bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium transition-colors">
+                Ganti
+              </button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-2.5">
+              <button @click="startGame(1)"
+                class="w-full py-3 sm:py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-pixel text-xs sm:text-sm shadow-lg shadow-cyan-500/25 transition-all transform active:scale-95 flex items-center justify-center gap-2 group">
+                <span>▶ MULAI MAIN</span>
+              </button>
+
+              <div class="grid grid-cols-2 gap-2">
+                <button @click="goToScreen('levelSelect')"
+                  class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5">
+                  🗺️ Pilih Level
+                </button>
+                <button @click="openModal('controls')"
+                  class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5">
+                  🎮 Kontrol
+                </button>
+              </div>
+            </div>
+
+            <!-- Highscore Footer -->
+            <div class="mt-5 pt-4 border-t border-slate-800 text-slate-400 text-xs flex justify-between items-center">
+              <span>Skor Tertinggi:</span>
+              <span class="font-pixel text-yellow-400 text-[11px]" x-text="highScore + ' PTS'"></span>
+            </div>
           </div>
         </div>
 
-        <!-- In-Game Stats Header (Visible during playing/paused) -->
-        <template x-if="screen === 'playing' || screen === 'paused'">
-          <div class="flex items-center gap-3 sm:gap-6 font-pixel text-[11px] sm:text-xs">
-            <!-- Hearts / HP -->
-            <div class="flex items-center gap-1 bg-slate-800/80 px-2 sm:px-3 py-1.5 rounded-lg border border-slate-700/60 shadow-inner">
-              <template x-for="i in maxLives" :key="i">
-                <span class="transition-transform duration-150 inline-block" :class="i <= lives ? 'text-red-500 scale-100' : 'text-slate-600 scale-90'">
-                  ❤
+        <!-- SCREEN: CHARACTER SELECT -->
+        <div x-show="screen === 'characterSelect'" x-transition
+          class="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm">
+          <div class="max-w-lg w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center">
+            <h2 class="font-pixel text-sm sm:text-base text-cyan-400 mb-1">PILIH KARAKTER</h2>
+            <p class="text-xs text-slate-400 mb-4">Setiap pahlawan memiliki kemampuan dan kelincahan unik</p>
+
+            <!-- Character Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+              <template x-for="hero in heroes" :key="hero.id">
+                <div @click="selectHero(hero.id)"
+                  class="p-3.5 rounded-xl border transition-all cursor-pointer text-left relative flex flex-col justify-between"
+                  :class="selectedHeroId === hero.id ? 'bg-cyan-950/40 border-cyan-400 shadow-lg shadow-cyan-900/30 ring-2 ring-cyan-400/50' : 'bg-slate-800/60 border-slate-700 hover:border-slate-500'">
+                  <!-- Active checkmark badge -->
+                  <template x-if="selectedHeroId === hero.id">
+                    <div class="absolute top-2 right-2 text-xs text-cyan-400 font-bold">✓ Terpilih</div>
+                  </template>
+
+                  <div>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-2 shadow"
+                      :style="'background-color: ' + hero.color">
+                      <span x-text="hero.icon"></span>
+                    </div>
+                    <div class="font-bold text-sm text-white" x-text="hero.name"></div>
+                    <div class="text-[11px] text-cyan-300 font-medium mb-2" x-text="hero.role"></div>
+                  </div>
+
+                  <div class="text-[10px] text-slate-300 border-t border-slate-700/60 pt-2 space-y-1">
+                    <div class="flex justify-between">
+                      <span class="text-slate-400">Kecepatan:</span>
+                      <span class="text-yellow-400 font-bold"
+                        x-text="'★'.repeat(hero.stats.speed) + '☆'.repeat(5 - hero.stats.speed)"></span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-400">Lompatan:</span>
+                      <span class="text-cyan-400 font-bold"
+                        x-text="'★'.repeat(hero.stats.jump) + '☆'.repeat(5 - hero.stats.jump)"></span>
+                    </div>
+                    <div class="text-[10px] text-amber-300 pt-1 font-semibold" x-text="hero.specialDesc"></div>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center gap-3">
+              <button @click="goToScreen('start')"
+                class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+                ← Kembali
+              </button>
+              <button @click="goToScreen('start')"
+                class="px-6 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold font-pixel shadow">
+                PILIH & SELESAI
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN: LEVEL SELECT -->
+        <div x-show="screen === 'levelSelect'" x-transition
+          class="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm">
+          <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center">
+            <h2 class="font-pixel text-sm sm:text-base text-yellow-400 mb-1">PILIH TAHAP / LEVEL</h2>
+            <p class="text-xs text-slate-400 mb-5">Selesaikan setiap level untuk membuka rintangan berikutnya</p>
+
+            <!-- Level Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+              <template x-for="lvl in levelsConfig" :key="lvl.id">
+                <div @click="isLevelUnlocked(lvl.id) && startGame(lvl.id)"
+                  class="p-4 rounded-xl border text-left relative transition-all"
+                  :class="isLevelUnlocked(lvl.id) ? 'bg-slate-800/80 border-slate-700 hover:border-cyan-400 cursor-pointer hover:scale-[1.02]' : 'bg-slate-900/60 border-slate-800/60 opacity-60 cursor-not-allowed'">
+                  <!-- Status / Stars badge -->
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="font-pixel text-[10px] text-cyan-400" x-text="'LEVEL ' + lvl.id"></span>
+                    <template x-if="isLevelUnlocked(lvl.id)">
+                      <span class="text-xs text-yellow-400"
+                        x-text="'★'.repeat(getLevelStars(lvl.id)) + '☆'.repeat(3 - getLevelStars(lvl.id))"></span>
+                    </template>
+                    <template x-if="!isLevelUnlocked(lvl.id)">
+                      <span class="text-xs text-slate-500">🔒 Terkunci</span>
+                    </template>
+                  </div>
+
+                  <div class="text-lg mb-1" x-text="lvl.icon"></div>
+                  <div class="font-bold text-sm text-white" x-text="lvl.name"></div>
+                  <div class="text-[11px] text-slate-400 mb-2" x-text="lvl.theme"></div>
+
+                  <div class="text-[10px] text-slate-400 border-t border-slate-700/60 pt-2 flex justify-between">
+                    <span>Koin: <b class="text-yellow-400" x-text="lvl.coinsCount"></b></span>
+                    <span>Target: <b class="text-slate-300" x-text="lvl.parTime + 's'"></b></span>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <!-- Back button -->
+            <div class="flex justify-start">
+              <button @click="goToScreen('start')"
+                class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+                ← Kembali ke Menu
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN: PAUSED MODAL -->
+        <div x-show="screen === 'paused'" x-transition
+          class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div class="max-w-sm w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 text-center shadow-2xl">
+            <h2 class="font-pixel text-base text-yellow-400 mb-1">PERMAINAN DIJEDA</h2>
+            <p class="text-xs text-slate-400 mb-5">Tarik napas sejenak sebelum melompat lagi</p>
+
+            <div class="space-y-2.5">
+              <button @click="resumeGame()"
+                class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-pixel text-xs shadow transition-all active:scale-95">
+                ▶ LANJUTKAN
+              </button>
+
+              <button @click="restartLevel()"
+                class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors">
+                🔄 Ulangi Level Ini
+              </button>
+
+              <button @click="openModal('settings')"
+                class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors">
+                ⚙️ Pengaturan
+              </button>
+
+              <button @click="goToScreen('start')"
+                class="w-full py-2.5 rounded-xl bg-slate-800/60 hover:bg-red-950/40 text-red-300 text-xs font-semibold border border-red-900/30 transition-colors">
+                🚪 Keluar ke Menu Utama
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN: GAME OVER MODAL -->
+        <div x-show="screen === 'gameover'" x-transition
+          class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm">
+          <div
+            class="max-w-sm w-full bg-slate-900 border border-red-500/40 rounded-2xl p-6 text-center shadow-2xl shadow-red-950/50">
+            <div
+              class="w-12 h-12 mx-auto rounded-full bg-red-500/20 text-red-400 flex items-center justify-center text-2xl mb-3 border border-red-500/30">
+              ☠️
+            </div>
+            <h2 class="font-pixel text-base sm:text-lg text-red-400 mb-1">GAME OVER</h2>
+            <p class="text-xs text-slate-300 mb-4" x-text="gameOverReason"></p>
+
+            <!-- Stats review -->
+            <div class="bg-slate-800/80 rounded-xl p-3 mb-5 border border-slate-700 text-xs space-y-1.5 text-left">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Skor Diperoleh:</span>
+                <span class="font-bold text-cyan-300" x-text="score"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Koin Terkumpul:</span>
+                <span class="font-bold text-yellow-400" x-text="coins + ' koin'"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Waktu Bermain:</span>
+                <span class="font-bold text-slate-300" x-text="formatTime(levelTimer)"></span>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <button @click="restartLevel()"
+                class="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 to-amber-500 hover:from-red-400 hover:to-amber-400 text-slate-950 font-pixel text-xs shadow-lg transition-transform active:scale-95">
+                🔄 COBA LAGI
+              </button>
+
+              <button @click="goToScreen('start')"
+                class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition-colors">
+                Menu Utama
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN: LEVEL CLEAR / WIN MODAL -->
+        <div x-show="screen === 'levelClear'" x-transition
+          class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm">
+          <div
+            class="max-w-md w-full bg-slate-900 border border-yellow-500/40 rounded-2xl p-6 text-center shadow-2xl shadow-yellow-950/40 relative overflow-hidden">
+            <!-- Glow -->
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-yellow-500/20 rounded-full blur-2xl"></div>
+
+            <div
+              class="w-14 h-14 mx-auto rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-3xl mb-2 border border-yellow-500/40 animate-bounce-slow">
+              🏆
+            </div>
+
+            <h2 class="font-pixel text-base sm:text-lg text-yellow-400 mb-1">LEVEL SELESAI!</h2>
+            <p class="text-xs text-emerald-300 font-semibold mb-3">Portal keberhasilan berhasil dicapai!</p>
+
+            <!-- Star Rating -->
+            <div class="flex justify-center items-center gap-2 text-2xl sm:text-3xl text-yellow-400 mb-4">
+              <template x-for="i in 3" :key="i">
+                <span class="transform transition-transform"
+                  :class="i <= victoryStars ? 'scale-110 drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]' : 'opacity-30 scale-90'">
+                  ★
                 </span>
               </template>
             </div>
 
-            <!-- Coins -->
-            <div class="flex items-center gap-1.5 bg-slate-800/80 px-2 sm:px-3 py-1.5 rounded-lg border border-slate-700/60 text-yellow-400">
-              <span class="text-sm">🪙</span>
-              <span x-text="coins + '/' + totalLevelCoins"></span>
-            </div>
-
-            <!-- Score -->
-            <div class="hidden md:flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-cyan-300">
-              <span class="text-slate-400">SKOR:</span>
-              <span x-text="score"></span>
-            </div>
-
-            <!-- Timer -->
-            <div class="flex items-center gap-1 bg-slate-800/80 px-2 sm:px-3 py-1.5 rounded-lg border border-slate-700/60 text-slate-200">
-              <span class="text-xs">⏱</span>
-              <span x-text="formatTime(levelTimer)"></span>
-            </div>
-          </div>
-        </template>
-
-        <!-- Header Actions -->
-        <div class="flex items-center gap-1.5 sm:gap-2">
-          <!-- Sound Toggle -->
-          <button 
-            @click="toggleAudio()" 
-            class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 transition-colors flex items-center gap-1"
-            :title="settings.sound ? 'Matikan Suara' : 'Nyalakan Suara'"
-          >
-            <span x-text="settings.sound ? '🔊' : '🔇'"></span>
-            <span class="hidden md:inline text-[11px]" x-text="settings.sound ? 'Audio Aktif' : 'Bisu'"></span>
-          </button>
-
-          <!-- BGM Toggle -->
-          <button 
-            @click="toggleBgm()" 
-            class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs transition-colors flex items-center gap-1"
-            :class="settings.music ? 'text-cyan-400 border-cyan-500/40' : 'text-slate-400'"
-            :title="settings.music ? 'Matikan Musik' : 'Nyalakan Musik'"
-          >
-            <span>🎵</span>
-            <span class="hidden md:inline text-[11px]" x-text="settings.music ? 'BGM' : 'BGM Off'"></span>
-          </button>
-
-          <!-- Pause / Menu Toggle when playing -->
-          <template x-if="screen === 'playing'">
-            <button 
-              @click="pauseGame()" 
-              class="px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-pixel text-[10px] sm:text-xs transition-all active:scale-95"
-            >
-              ⏸ JEDA
-            </button>
-          </template>
-
-          <!-- Settings Button -->
-          <button 
-            @click="openModal('settings')" 
-            class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 transition-colors"
-            title="Pengaturan"
-          >
-            ⚙️
-          </button>
-        </div>
-      </header>
-
-      <!-- CANVAS & GAMEPLAY VIEWPORT -->
-      <main class="relative flex-1 w-full flex items-center justify-center bg-slate-950 overflow-hidden p-1 sm:p-3">
-        <!-- The Game Canvas -->
-        <div class="relative w-full h-full flex items-center justify-center">
-          <canvas 
-            id="gameCanvas" 
-            class="w-full h-full object-contain rounded-xl shadow-2xl border border-slate-800/80 bg-slate-900"
-            style="touch-action: none;"
-          ></canvas>
-
-          <!-- SCREEN: START MENU -->
-          <div 
-            x-show="screen === 'start'" 
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            class="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
-          >
-            <div class="max-w-md w-full bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-cyan-900/30 text-center relative overflow-hidden">
-              <!-- Glow accent -->
-              <div class="absolute -top-16 -left-16 w-32 h-32 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
-              <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-              <!-- Badge -->
-              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-4">
-                <span class="animate-pulse">●</span> Retro 2D Platformer
+            <!-- Score Summary -->
+            <div class="bg-slate-800/80 rounded-xl p-3.5 mb-5 border border-slate-700 text-xs space-y-1.5 text-left">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Tahap / Level:</span>
+                <span class="font-bold text-white" x-text="currentLevelData ? currentLevelData.name : ''"></span>
               </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Koin Terkumpul:</span>
+                <span class="font-bold text-yellow-400" x-text="coins + ' / ' + totalLevelCoins"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Waktu Tempuh:</span>
+                <span class="font-bold text-slate-200" x-text="formatTime(levelTimer)"></span>
+              </div>
+              <div class="flex justify-between border-t border-slate-700/60 pt-1.5 font-bold">
+                <span class="text-cyan-300">Total Skor Level:</span>
+                <span class="font-pixel text-cyan-400 text-[11px]" x-text="score"></span>
+              </div>
+            </div>
 
-              <!-- Main Game Title -->
-              <h2 class="font-pixel text-xl sm:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-400 mb-2 tracking-wider">
-                PIXEL LEAP
-              </h2>
-              <p class="text-xs sm:text-sm text-slate-300 mb-6">
-                Jelajahi dunia pulau melayang, kumpulkan koin emas, kalahkan monster slime, dan capai portal kemenangan!
-              </p>
-
-              <!-- Selected Hero Preview Badge -->
-              <div class="mb-5 p-3 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow" :style="'background-color: ' + currentHero.color">
-                    <span x-text="currentHero.icon"></span>
-                  </div>
-                  <div class="text-left">
-                    <div class="text-xs font-bold text-white" x-text="currentHero.name"></div>
-                    <div class="text-[11px] text-cyan-400" x-text="currentHero.specialDesc"></div>
-                  </div>
+            <!-- Buttons -->
+            <div class="space-y-2">
+              <template x-if="currentLevel < levelsConfig.length">
+                <button @click="nextLevel()"
+                  class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-pixel text-xs shadow-lg transition-transform active:scale-95">
+                  🚀 LEVEL SELANJUTNYA
+                </button>
+              </template>
+              <template x-if="currentLevel >= levelsConfig.length">
+                <div
+                  class="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold mb-2">
+                  🎉 Selamat! Anda telah menamatkan seluruh level!
                 </div>
-                <button 
-                  @click="goToScreen('characterSelect')" 
-                  class="text-xs px-2.5 py-1 rounded-md bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium transition-colors"
-                >
-                  Ganti
+              </template>
+
+              <div class="grid grid-cols-2 gap-2">
+                <button @click="restartLevel()"
+                  class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700">
+                  🔄 Main Ulang
                 </button>
-              </div>
-
-              <!-- Action Buttons -->
-              <div class="flex flex-col gap-2.5">
-                <button 
-                  @click="startGame(1)" 
-                  class="w-full py-3 sm:py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-pixel text-xs sm:text-sm shadow-lg shadow-cyan-500/25 transition-all transform active:scale-95 flex items-center justify-center gap-2 group"
-                >
-                  <span>▶ MULAI MAIN</span>
-                </button>
-
-                <div class="grid grid-cols-2 gap-2">
-                  <button 
-                    @click="goToScreen('levelSelect')" 
-                    class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    🗺️ Pilih Level
-                  </button>
-                  <button 
-                    @click="openModal('controls')" 
-                    class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    🎮 Kontrol
-                  </button>
-                </div>
-              </div>
-
-              <!-- Highscore Footer -->
-              <div class="mt-5 pt-4 border-t border-slate-800 text-slate-400 text-xs flex justify-between items-center">
-                <span>Skor Tertinggi:</span>
-                <span class="font-pixel text-yellow-400 text-[11px]" x-text="highScore + ' PTS'"></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- SCREEN: CHARACTER SELECT -->
-          <div 
-            x-show="screen === 'characterSelect'" 
-            x-transition 
-            class="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm"
-          >
-            <div class="max-w-lg w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center">
-              <h2 class="font-pixel text-sm sm:text-base text-cyan-400 mb-1">PILIH KARAKTER</h2>
-              <p class="text-xs text-slate-400 mb-4">Setiap pahlawan memiliki kemampuan dan kelincahan unik</p>
-
-              <!-- Character Cards Grid -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                <template x-for="hero in heroes" :key="hero.id">
-                  <div 
-                    @click="selectHero(hero.id)" 
-                    class="p-3.5 rounded-xl border transition-all cursor-pointer text-left relative flex flex-col justify-between"
-                    :class="selectedHeroId === hero.id ? 'bg-cyan-950/40 border-cyan-400 shadow-lg shadow-cyan-900/30 ring-2 ring-cyan-400/50' : 'bg-slate-800/60 border-slate-700 hover:border-slate-500'"
-                  >
-                    <!-- Active checkmark badge -->
-                    <template x-if="selectedHeroId === hero.id">
-                      <div class="absolute top-2 right-2 text-xs text-cyan-400 font-bold">✓ Terpilih</div>
-                    </template>
-
-                    <div>
-                      <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-2 shadow" :style="'background-color: ' + hero.color">
-                        <span x-text="hero.icon"></span>
-                      </div>
-                      <div class="font-bold text-sm text-white" x-text="hero.name"></div>
-                      <div class="text-[11px] text-cyan-300 font-medium mb-2" x-text="hero.role"></div>
-                    </div>
-
-                    <div class="text-[10px] text-slate-300 border-t border-slate-700/60 pt-2 space-y-1">
-                      <div class="flex justify-between">
-                        <span class="text-slate-400">Kecepatan:</span>
-                        <span class="text-yellow-400 font-bold" x-text="'★'.repeat(hero.stats.speed) + '☆'.repeat(5 - hero.stats.speed)"></span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span class="text-slate-400">Lompatan:</span>
-                        <span class="text-cyan-400 font-bold" x-text="'★'.repeat(hero.stats.jump) + '☆'.repeat(5 - hero.stats.jump)"></span>
-                      </div>
-                      <div class="text-[10px] text-amber-300 pt-1 font-semibold" x-text="hero.specialDesc"></div>
-                    </div>
-                  </div>
-                </template>
-              </div>
-
-              <!-- Navigation -->
-              <div class="flex justify-between items-center gap-3">
-                <button 
-                  @click="goToScreen('start')" 
-                  class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
-                >
-                  ← Kembali
-                </button>
-                <button 
-                  @click="goToScreen('start')" 
-                  class="px-6 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold font-pixel shadow"
-                >
-                  PILIH & SELESAI
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- SCREEN: LEVEL SELECT -->
-          <div 
-            x-show="screen === 'levelSelect'" 
-            x-transition 
-            class="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm"
-          >
-            <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center">
-              <h2 class="font-pixel text-sm sm:text-base text-yellow-400 mb-1">PILIH TAHAP / LEVEL</h2>
-              <p class="text-xs text-slate-400 mb-5">Selesaikan setiap level untuk membuka rintangan berikutnya</p>
-
-              <!-- Level Cards -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                <template x-for="lvl in levelsConfig" :key="lvl.id">
-                  <div 
-                    @click="isLevelUnlocked(lvl.id) && startGame(lvl.id)" 
-                    class="p-4 rounded-xl border text-left relative transition-all"
-                    :class="isLevelUnlocked(lvl.id) ? 'bg-slate-800/80 border-slate-700 hover:border-cyan-400 cursor-pointer hover:scale-[1.02]' : 'bg-slate-900/60 border-slate-800/60 opacity-60 cursor-not-allowed'"
-                  >
-                    <!-- Status / Stars badge -->
-                    <div class="flex justify-between items-center mb-2">
-                      <span class="font-pixel text-[10px] text-cyan-400" x-text="'LEVEL ' + lvl.id"></span>
-                      <template x-if="isLevelUnlocked(lvl.id)">
-                        <span class="text-xs text-yellow-400" x-text="'★'.repeat(getLevelStars(lvl.id)) + '☆'.repeat(3 - getLevelStars(lvl.id))"></span>
-                      </template>
-                      <template x-if="!isLevelUnlocked(lvl.id)">
-                        <span class="text-xs text-slate-500">🔒 Terkunci</span>
-                      </template>
-                    </div>
-
-                    <div class="text-lg mb-1" x-text="lvl.icon"></div>
-                    <div class="font-bold text-sm text-white" x-text="lvl.name"></div>
-                    <div class="text-[11px] text-slate-400 mb-2" x-text="lvl.theme"></div>
-
-                    <div class="text-[10px] text-slate-400 border-t border-slate-700/60 pt-2 flex justify-between">
-                      <span>Koin: <b class="text-yellow-400" x-text="lvl.coinsCount"></b></span>
-                      <span>Target: <b class="text-slate-300" x-text="lvl.parTime + 's'"></b></span>
-                    </div>
-                  </div>
-                </template>
-              </div>
-
-              <!-- Back button -->
-              <div class="flex justify-start">
-                <button 
-                  @click="goToScreen('start')" 
-                  class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
-                >
-                  ← Kembali ke Menu
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- SCREEN: PAUSED MODAL -->
-          <div 
-            x-show="screen === 'paused'" 
-            x-transition 
-            class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
-          >
-            <div class="max-w-sm w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 text-center shadow-2xl">
-              <h2 class="font-pixel text-base text-yellow-400 mb-1">PERMAINAN DIJEDA</h2>
-              <p class="text-xs text-slate-400 mb-5">Tarik napas sejenak sebelum melompat lagi</p>
-
-              <div class="space-y-2.5">
-                <button 
-                  @click="resumeGame()" 
-                  class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-pixel text-xs shadow transition-all active:scale-95"
-                >
-                  ▶ LANJUTKAN
-                </button>
-
-                <button 
-                  @click="restartLevel()" 
-                  class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
-                >
-                  🔄 Ulangi Level Ini
-                </button>
-
-                <button 
-                  @click="openModal('settings')" 
-                  class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
-                >
-                  ⚙️ Pengaturan
-                </button>
-
-                <button 
-                  @click="goToScreen('start')" 
-                  class="w-full py-2.5 rounded-xl bg-slate-800/60 hover:bg-red-950/40 text-red-300 text-xs font-semibold border border-red-900/30 transition-colors"
-                >
-                  🚪 Keluar ke Menu Utama
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- SCREEN: GAME OVER MODAL -->
-          <div 
-            x-show="screen === 'gameover'" 
-            x-transition 
-            class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm"
-          >
-            <div class="max-w-sm w-full bg-slate-900 border border-red-500/40 rounded-2xl p-6 text-center shadow-2xl shadow-red-950/50">
-              <div class="w-12 h-12 mx-auto rounded-full bg-red-500/20 text-red-400 flex items-center justify-center text-2xl mb-3 border border-red-500/30">
-                ☠️
-              </div>
-              <h2 class="font-pixel text-base sm:text-lg text-red-400 mb-1">GAME OVER</h2>
-              <p class="text-xs text-slate-300 mb-4" x-text="gameOverReason"></p>
-
-              <!-- Stats review -->
-              <div class="bg-slate-800/80 rounded-xl p-3 mb-5 border border-slate-700 text-xs space-y-1.5 text-left">
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Skor Diperoleh:</span>
-                  <span class="font-bold text-cyan-300" x-text="score"></span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Koin Terkumpul:</span>
-                  <span class="font-bold text-yellow-400" x-text="coins + ' koin'"></span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Waktu Bermain:</span>
-                  <span class="font-bold text-slate-300" x-text="formatTime(levelTimer)"></span>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <button 
-                  @click="restartLevel()" 
-                  class="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 to-amber-500 hover:from-red-400 hover:to-amber-400 text-slate-950 font-pixel text-xs shadow-lg transition-transform active:scale-95"
-                >
-                  🔄 COBA LAGI
-                </button>
-
-                <button 
-                  @click="goToScreen('start')" 
-                  class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition-colors"
-                >
+                <button @click="goToScreen('start')"
+                  class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700">
                   Menu Utama
                 </button>
               </div>
             </div>
           </div>
-
-          <!-- SCREEN: LEVEL CLEAR / WIN MODAL -->
-          <div 
-            x-show="screen === 'levelClear'" 
-            x-transition 
-            class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm"
-          >
-            <div class="max-w-md w-full bg-slate-900 border border-yellow-500/40 rounded-2xl p-6 text-center shadow-2xl shadow-yellow-950/40 relative overflow-hidden">
-              <!-- Glow -->
-              <div class="absolute -top-12 -right-12 w-32 h-32 bg-yellow-500/20 rounded-full blur-2xl"></div>
-
-              <div class="w-14 h-14 mx-auto rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-3xl mb-2 border border-yellow-500/40 animate-bounce-slow">
-                🏆
-              </div>
-
-              <h2 class="font-pixel text-base sm:text-lg text-yellow-400 mb-1">LEVEL SELESAI!</h2>
-              <p class="text-xs text-emerald-300 font-semibold mb-3">Portal keberhasilan berhasil dicapai!</p>
-
-              <!-- Star Rating -->
-              <div class="flex justify-center items-center gap-2 text-2xl sm:text-3xl text-yellow-400 mb-4">
-                <template x-for="i in 3" :key="i">
-                  <span class="transform transition-transform" :class="i <= victoryStars ? 'scale-110 drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]' : 'opacity-30 scale-90'">
-                    ★
-                  </span>
-                </template>
-              </div>
-
-              <!-- Score Summary -->
-              <div class="bg-slate-800/80 rounded-xl p-3.5 mb-5 border border-slate-700 text-xs space-y-1.5 text-left">
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Tahap / Level:</span>
-                  <span class="font-bold text-white" x-text="currentLevelData ? currentLevelData.name : ''"></span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Koin Terkumpul:</span>
-                  <span class="font-bold text-yellow-400" x-text="coins + ' / ' + totalLevelCoins"></span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Waktu Tempuh:</span>
-                  <span class="font-bold text-slate-200" x-text="formatTime(levelTimer)"></span>
-                </div>
-                <div class="flex justify-between border-t border-slate-700/60 pt-1.5 font-bold">
-                  <span class="text-cyan-300">Total Skor Level:</span>
-                  <span class="font-pixel text-cyan-400 text-[11px]" x-text="score"></span>
-                </div>
-              </div>
-
-              <!-- Buttons -->
-              <div class="space-y-2">
-                <template x-if="currentLevel < levelsConfig.length">
-                  <button 
-                    @click="nextLevel()" 
-                    class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-pixel text-xs shadow-lg transition-transform active:scale-95"
-                  >
-                    🚀 LEVEL SELANJUTNYA
-                  </button>
-                </template>
-                <template x-if="currentLevel >= levelsConfig.length">
-                  <div class="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold mb-2">
-                    🎉 Selamat! Anda telah menamatkan seluruh level!
-                  </div>
-                </template>
-
-                <div class="grid grid-cols-2 gap-2">
-                  <button 
-                    @click="restartLevel()" 
-                    class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700"
-                  >
-                    🔄 Main Ulang
-                  </button>
-                  <button 
-                    @click="goToScreen('start')" 
-                    class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700"
-                  >
-                    Menu Utama
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <!-- RESPONSIVE MOBILE TOUCH CONTROLS (Shown when screen === 'playing') -->
-      <footer 
-        x-show="screen === 'playing'" 
-        class="w-full p-2 sm:p-3 bg-slate-950/90 border-t border-slate-800/80 flex items-center justify-between z-30 select-none"
-      >
-        <!-- Directional D-Pad (Left / Right) -->
-        <div class="flex items-center gap-2 sm:gap-3">
-          <button 
-            type="button"
-            @touchstart.prevent="setKey('ArrowLeft', true)" 
-            @touchend.prevent="setKey('ArrowLeft', false)"
-            @mousedown.prevent="setKey('ArrowLeft', true)" 
-            @mouseup.prevent="setKey('ArrowLeft', false)"
-            @mouseleave.prevent="setKey('ArrowLeft', false)"
-            class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-800 active:bg-cyan-600 border-2 border-slate-700 active:border-cyan-400 flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg active:shadow-cyan-500/40"
-          >
-            ◀
-          </button>
-          
-          <button 
-            type="button"
-            @touchstart.prevent="setKey('ArrowRight', true)" 
-            @touchend.prevent="setKey('ArrowRight', false)"
-            @mousedown.prevent="setKey('ArrowRight', true)" 
-            @mouseup.prevent="setKey('ArrowRight', false)"
-            @mouseleave.prevent="setKey('ArrowRight', false)"
-            class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-800 active:bg-cyan-600 border-2 border-slate-700 active:border-cyan-400 flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg active:shadow-cyan-500/40"
-          >
-            ▶
-          </button>
-        </div>
-
-        <!-- Center Key Guide reminder for desktop users -->
-        <div class="hidden md:flex flex-col items-center text-center text-[10px] text-slate-500">
-          <div class="flex gap-1.5 mb-1 font-mono">
-            <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">A / ◄</span>
-            <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">D / ►</span>
-            <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">W / Spasi: Lompat</span>
-            <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">Shift: Dash</span>
-          </div>
-          <span>Gunakan Keyboard atau Tombol Sentuh</span>
-        </div>
-
-        <!-- Action Buttons (Jump & Dash) -->
-        <div class="flex items-center gap-2 sm:gap-3">
-          <!-- Dash Button -->
-          <button 
-            type="button"
-            @touchstart.prevent="triggerDash()" 
-            @mousedown.prevent="triggerDash()"
-            class="touch-btn w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-indigo-900/60 active:bg-indigo-600 border-2 border-indigo-700/80 active:border-indigo-400 flex flex-col items-center justify-center text-indigo-200 text-xs sm:text-sm font-bold shadow-lg"
-          >
-            <span>⚡</span>
-            <span class="text-[9px] font-pixel">DASH</span>
-          </button>
-
-          <!-- Jump Button (Enlarged for comfort) -->
-          <button 
-            type="button"
-            @touchstart.prevent="setKey('Space', true)" 
-            @touchend.prevent="setKey('Space', false)"
-            @mousedown.prevent="setKey('Space', true)" 
-            @mouseup.prevent="setKey('Space', false)"
-            @mouseleave.prevent="setKey('Space', false)"
-            class="touch-btn w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-tr from-cyan-600 to-sky-500 active:from-cyan-400 active:to-sky-300 border-2 border-cyan-400 flex flex-col items-center justify-center text-slate-950 font-pixel text-xs sm:text-sm shadow-xl shadow-cyan-600/30"
-          >
-            <span class="text-base sm:text-lg">▲</span>
-            <span class="text-[9px] font-bold tracking-wider">LOMPAT</span>
-          </button>
-        </div>
-      </footer>
-
-      <!-- MODAL: CONTROLS & HOW TO PLAY -->
-      <div 
-        x-show="activeModal === 'controls'" 
-        x-transition 
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
-      >
-        <div class="max-w-md w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl relative">
-          <button @click="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
-
-          <h3 class="font-pixel text-sm text-cyan-400 mb-2">PANDUAN & KONTROL</h3>
-          <p class="text-xs text-slate-300 mb-4">Cara bermain di komputer & HP/Tablet:</p>
-
-          <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
-              <div class="font-bold text-white mb-1.5 flex items-center gap-1.5">
-                <span>💻</span> Kontrol Keyboard (Komputer):
-              </div>
-              <ul class="space-y-1 text-slate-300 text-[11px]">
-                <li>• <b class="text-cyan-400">A / Panah Kiri</b>: Bergerak ke kiri</li>
-                <li>• <b class="text-cyan-400">D / Panah Kanan</b>: Bergerak ke kanan</li>
-                <li>• <b class="text-yellow-400">W / Spasi / Panah Atas</b>: Melompat (Tekan lagi di udara untuk Double Jump pada Zara)</li>
-                <li>• <b class="text-indigo-400">Shift / K</b>: Dash cepat ke depan</li>
-                <li>• <b class="text-slate-400">P / Escape</b>: Jeda permainan</li>
-                <li>• <b class="text-slate-400">R</b>: Mulai ulang level</li>
-              </ul>
-            </div>
-
-            <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
-              <div class="font-bold text-white mb-1.5 flex items-center gap-1.5">
-                <span>📱</span> Kontrol Layar Sentuh (HP & Tablet):
-              </div>
-              <p class="text-[11px] text-slate-300">
-                Gunakan tombol <b>◀</b> dan <b>▶</b> di sudut kiri bawah untuk bergerak, serta tombol <b>LOMPAT</b> dan <b>DASH</b> di kanan bawah.
-              </p>
-            </div>
-
-            <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
-              <div class="font-bold text-white mb-1.5 flex items-center gap-1.5">
-                <span>💡</span> Tips Berpetualang:
-              </div>
-              <ul class="space-y-1 text-slate-300 text-[11px]">
-                <li>• Lompat tepat di atas musuh <b>Slime</b> untuk menginjak dan memusnahkannya!</li>
-                <li>• Injak jamur <b>Pegas</b> untuk melenting tinggi menggapai rahasia.</li>
-                <li>• Hati-hati dengan duri dan lahar panas karena akan mengurangi nyawa.</li>
-                <li>• Raih portal kristal di ujung level untuk menyelesaikan tahap!</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="mt-5 text-center">
-            <button 
-              @click="closeModal()" 
-              class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs"
-            >
-              Mengerti & Siap Main
-            </button>
-          </div>
         </div>
       </div>
+    </main>
 
-      <!-- MODAL: SETTINGS -->
-      <div 
-        x-show="activeModal === 'settings'" 
-        x-transition 
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
-      >
-        <div class="max-w-md w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl relative">
-          <button @click="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+    <!-- RESPONSIVE MOBILE TOUCH CONTROLS (Shown when screen === 'playing') -->
+    <footer x-show="screen === 'playing'"
+      class="w-full p-2 sm:p-3 bg-slate-950/90 border-t border-slate-800/80 flex items-center justify-between z-30 select-none">
+      <!-- Directional D-Pad (Left / Right) -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" @touchstart.prevent="setKey('ArrowLeft', true)"
+          @touchend.prevent="setKey('ArrowLeft', false)" @mousedown.prevent="setKey('ArrowLeft', true)"
+          @mouseup.prevent="setKey('ArrowLeft', false)" @mouseleave.prevent="setKey('ArrowLeft', false)"
+          class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-800 active:bg-cyan-600 border-2 border-slate-700 active:border-cyan-400 flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg active:shadow-cyan-500/40">
+          ◀
+        </button>
 
-          <h3 class="font-pixel text-sm text-cyan-400 mb-1">PENGATURAN</h3>
-          <p class="text-xs text-slate-400 mb-5">Sesuaikan audio dan tampilan visual</p>
-
-          <div class="space-y-4 text-xs">
-            <!-- Sound FX -->
-            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700">
-              <div>
-                <div class="font-bold text-white">Efek Suara (SFX)</div>
-                <div class="text-[11px] text-slate-400">Suara lompatan, koin, dan benturan</div>
-              </div>
-              <button 
-                @click="toggleAudio()" 
-                class="px-3 py-1.5 rounded-lg font-bold text-xs transition-colors"
-                :class="settings.sound ? 'bg-cyan-500 text-slate-950' : 'bg-slate-700 text-slate-300'"
-                x-text="settings.sound ? 'AKTIF' : 'MATI'"
-              ></button>
-            </div>
-
-            <!-- BGM Chiptune -->
-            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700">
-              <div>
-                <div class="font-bold text-white">Musik Retro (BGM)</div>
-                <div class="text-[11px] text-slate-400">Irama 8-bit chiptune yang dinamis</div>
-              </div>
-              <button 
-                @click="toggleBgm()" 
-                class="px-3 py-1.5 rounded-lg font-bold text-xs transition-colors"
-                :class="settings.music ? 'bg-cyan-500 text-slate-950' : 'bg-slate-700 text-slate-300'"
-                x-text="settings.music ? 'AKTIF' : 'MATI'"
-              ></button>
-            </div>
-
-            <!-- Scanline Filter -->
-            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700">
-              <div>
-                <div class="font-bold text-white">Efek CRT Scanlines</div>
-                <div class="text-[11px] text-slate-400">Garis retro arcade monitor CRT</div>
-              </div>
-              <button 
-                @click="settings.scanlines = !settings.scanlines; saveSettings()" 
-                class="px-3 py-1.5 rounded-lg font-bold text-xs transition-colors"
-                :class="settings.scanlines ? 'bg-cyan-500 text-slate-950' : 'bg-slate-700 text-slate-300'"
-                x-text="settings.scanlines ? 'AKTIF' : 'MATI'"
-              ></button>
-            </div>
-
-            <!-- Reset progress -->
-            <div class="pt-2">
-              <button 
-                @click="resetProgress()" 
-                class="w-full py-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-800/50 text-red-300 text-xs font-semibold transition-colors"
-              >
-                🗑️ Reset Skor & Kunci Level
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-5 text-center">
-            <button 
-              @click="closeModal()" 
-              class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700"
-            >
-              Simpan & Tutup
-            </button>
-          </div>
-        </div>
+        <button type="button" @touchstart.prevent="setKey('ArrowRight', true)"
+          @touchend.prevent="setKey('ArrowRight', false)" @mousedown.prevent="setKey('ArrowRight', true)"
+          @mouseup.prevent="setKey('ArrowRight', false)" @mouseleave.prevent="setKey('ArrowRight', false)"
+          class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-800 active:bg-cyan-600 border-2 border-slate-700 active:border-cyan-400 flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg active:shadow-cyan-500/40">
+          ▶
+        </button>
       </div>
 
+      <!-- Center Key Guide reminder for desktop users -->
+      <div class="hidden md:flex flex-col items-center text-center text-[10px] text-slate-500">
+        <div class="flex gap-1.5 mb-1 font-mono">
+          <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">A / ◄</span>
+          <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">D / ►</span>
+          <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">W / Spasi:
+            Lompat</span>
+          <span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">Shift: Dash</span>
+        </div>
+        <span>Gunakan Keyboard atau Tombol Sentuh</span>
+      </div>
+
+      <!-- Action Buttons (Jump & Dash) -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Dash Button -->
+        <button type="button" @touchstart.prevent="triggerDash()" @mousedown.prevent="triggerDash()"
+          class="touch-btn w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-indigo-900/60 active:bg-indigo-600 border-2 border-indigo-700/80 active:border-indigo-400 flex flex-col items-center justify-center text-indigo-200 text-xs sm:text-sm font-bold shadow-lg">
+          <span>⚡</span>
+          <span class="text-[9px] font-pixel">DASH</span>
+        </button>
+
+        <!-- Jump Button (Enlarged for comfort) -->
+        <button type="button" @touchstart.prevent="setKey('Space', true)" @touchend.prevent="setKey('Space', false)"
+          @mousedown.prevent="setKey('Space', true)" @mouseup.prevent="setKey('Space', false)"
+          @mouseleave.prevent="setKey('Space', false)"
+          class="touch-btn w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-tr from-cyan-600 to-sky-500 active:from-cyan-400 active:to-sky-300 border-2 border-cyan-400 flex flex-col items-center justify-center text-slate-950 font-pixel text-xs sm:text-sm shadow-xl shadow-cyan-600/30">
+          <span class="text-base sm:text-lg">▲</span>
+          <span class="text-[9px] font-bold tracking-wider">LOMPAT</span>
+        </button>
+      </div>
+    </footer>
+
+    <!-- MODAL: CONTROLS & HOW TO PLAY -->
+    <div x-show="activeModal === 'controls'" x-transition
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+      <div class="max-w-md w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl relative">
+        <button @click="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+
+        <h3 class="font-pixel text-sm text-cyan-400 mb-2">PANDUAN & KONTROL</h3>
+        <p class="text-xs text-slate-300 mb-4">Cara bermain di komputer & HP/Tablet:</p>
+
+        <div class="space-y-3 text-xs">
+          <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
+            <div class="font-bold text-white mb-1.5 flex items-center gap-1.5">
+              <span>💻</span> Kontrol Keyboard (Komputer):
+            </div>
+            <ul class="space-y-1 text-slate-300 text-[11px]">
+              <li>• <b class="text-cyan-400">A / Panah Kiri</b>: Bergerak ke kiri</li>
+              <li>• <b class="text-cyan-400">D / Panah Kanan</b>: Bergerak ke kanan</li>
+              <li>• <b class="text-yellow-400">W / Spasi / Panah Atas</b>: Melompat (Tekan lagi di udara untuk Double
+                Jump pada Zara)</li>
+              <li>• <b class="text-indigo-400">Shift / K</b>: Dash cepat ke depan</li>
+              <li>• <b class="text-slate-400">P / Escape</b>: Jeda permainan</li>
+              <li>• <b class="text-slate-400">R</b>: Mulai ulang level</li>
+            </ul>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
+            <div class="font-bold text-white mb-1.5 flex items-center gap-1.5">
+              <span>📱</span> Kontrol Layar Sentuh (HP & Tablet):
+            </div>
+            <p class="text-[11px] text-slate-300">
+              Gunakan tombol <b>◀</b> dan <b>▶</b> di sudut kiri bawah untuk bergerak, serta tombol <b>LOMPAT</b> dan
+              <b>DASH</b> di kanan bawah.
+            </p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
+            <div class="font-bold text-white mb-1.5 flex items-center gap-1.5">
+              <span>💡</span> Tips Berpetualang:
+            </div>
+            <ul class="space-y-1 text-slate-300 text-[11px]">
+              <li>• Lompat tepat di atas musuh <b>Slime</b> untuk menginjak dan memusnahkannya!</li>
+              <li>• Injak jamur <b>Pegas</b> untuk melenting tinggi menggapai rahasia.</li>
+              <li>• Hati-hati dengan duri dan lahar panas karena akan mengurangi nyawa.</li>
+              <li>• Raih portal kristal di ujung level untuk menyelesaikan tahap!</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-5 text-center">
+          <button @click="closeModal()"
+            class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs">
+            Mengerti & Siap Main
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Hidden mount point for Vite React compatibility -->
-    <div id="root" class="hidden"></div>
+    <!-- MODAL: SETTINGS -->
+    <div x-show="activeModal === 'settings'" x-transition
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+      <div class="max-w-md w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl relative">
+        <button @click="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
 
-    <!-- MAIN JAVASCRIPT: ALPINE.JS DATA & CANVAS PLATFORMER ENGINE -->
-    <script>
-      // WEB AUDIO API SYNTHESIZER (No external audio files needed!)
-      class RetroAudio {
-        constructor() {
-          this.ctx = null;
-          this.enabled = true;
-          this.bgmEnabled = false;
-          this.bgmTimer = null;
-          this.bgmNoteIndex = 0;
+        <h3 class="font-pixel text-sm text-cyan-400 mb-1">PENGATURAN</h3>
+        <p class="text-xs text-slate-400 mb-5">Sesuaikan audio dan tampilan visual</p>
+
+        <div class="space-y-4 text-xs">
+          <!-- Sound FX -->
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+            <div>
+              <div class="font-bold text-white">Efek Suara (SFX)</div>
+              <div class="text-[11px] text-slate-400">Suara lompatan, koin, dan benturan</div>
+            </div>
+            <button @click="toggleAudio()" class="px-3 py-1.5 rounded-lg font-bold text-xs transition-colors"
+              :class="settings.sound ? 'bg-cyan-500 text-slate-950' : 'bg-slate-700 text-slate-300'"
+              x-text="settings.sound ? 'AKTIF' : 'MATI'"></button>
+          </div>
+
+          <!-- BGM Chiptune -->
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+            <div>
+              <div class="font-bold text-white">Musik Retro (BGM)</div>
+              <div class="text-[11px] text-slate-400">Irama 8-bit chiptune yang dinamis</div>
+            </div>
+            <button @click="toggleBgm()" class="px-3 py-1.5 rounded-lg font-bold text-xs transition-colors"
+              :class="settings.music ? 'bg-cyan-500 text-slate-950' : 'bg-slate-700 text-slate-300'"
+              x-text="settings.music ? 'AKTIF' : 'MATI'"></button>
+          </div>
+
+          <!-- Scanline Filter -->
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+            <div>
+              <div class="font-bold text-white">Efek CRT Scanlines</div>
+              <div class="text-[11px] text-slate-400">Garis retro arcade monitor CRT</div>
+            </div>
+            <button @click="settings.scanlines = !settings.scanlines; saveSettings()"
+              class="px-3 py-1.5 rounded-lg font-bold text-xs transition-colors"
+              :class="settings.scanlines ? 'bg-cyan-500 text-slate-950' : 'bg-slate-700 text-slate-300'"
+              x-text="settings.scanlines ? 'AKTIF' : 'MATI'"></button>
+          </div>
+
+          <!-- Reset progress -->
+          <div class="pt-2">
+            <button @click="resetProgress()"
+              class="w-full py-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-800/50 text-red-300 text-xs font-semibold transition-colors">
+              🗑️ Reset Skor & Kunci Level
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-5 text-center">
+          <button @click="closeModal()"
+            class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700">
+            Simpan & Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Hidden mount point for Vite React compatibility -->
+  <div id="root" class="hidden"></div>
+
+  <!-- MAIN JAVASCRIPT: ALPINE.JS DATA & CANVAS PLATFORMER ENGINE -->
+  <script>
+    // WEB AUDIO API SYNTHESIZER (No external audio files needed!)
+    class RetroAudio {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+        this.bgmEnabled = false;
+        this.bgmTimer = null;
+        this.bgmNoteIndex = 0;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
         }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type = 'square', duration = 0.1, gainVal = 0.1, rampToFreq = null) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          if (rampToFreq !== null) {
+            osc.frequency.exponentialRampToValueAtTime(Math.max(1, rampToFreq), this.ctx.currentTime + duration);
+          }
+
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) { }
+      }
+
+      jump() {
+        this.playTone(150, 'square', 0.14, 0.12, 440);
+      }
+
+      doubleJump() {
+        this.playTone(300, 'sine', 0.12, 0.12, 600);
+      }
+
+      dash() {
+        this.playTone(400, 'sawtooth', 0.09, 0.08, 150);
+      }
+
+      coin() {
+        this.playTone(987.77, 'sine', 0.08, 0.1); // B5
+        setTimeout(() => this.playTone(1318.51, 'sine', 0.18, 0.12), 70); // E6
+      }
+
+      gem() {
+        this.playTone(659.25, 'sine', 0.06, 0.1);
+        setTimeout(() => this.playTone(830.61, 'sine', 0.06, 0.1), 50);
+        setTimeout(() => this.playTone(1174.66, 'sine', 0.16, 0.12), 100);
+      }
+
+      spring() {
+        this.playTone(220, 'triangle', 0.35, 0.15, 880);
+      }
+
+      stomp() {
+        this.playTone(300, 'sawtooth', 0.1, 0.15, 80);
+      }
+
+      hit() {
+        this.playTone(180, 'sawtooth', 0.25, 0.2, 50);
+      }
+
+      win() {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((f, idx) => {
+          setTimeout(() => this.playTone(f, 'triangle', 0.22, 0.15), idx * 120);
+        });
+      }
+
+      gameover() {
+        const notes = [440, 392, 349.23, 293.66];
+        notes.forEach((f, idx) => {
+          setTimeout(() => this.playTone(f, 'sawtooth', 0.25, 0.15, f * 0.8), idx * 150);
+        });
+      }
+
+      // Procedural retro 8-bit chiptune loop
+      startBgm() {
+        this.bgmEnabled = true;
+        this.init();
+        if (this.bgmTimer) clearInterval(this.bgmTimer);
+
+        const bassline = [110, 110, 130.81, 146.83, 110, 110, 164.81, 146.83, 98, 98, 123.47, 130.81, 82.41, 98, 110, 130.81];
+        const leadline = [440, 0, 523.25, 0, 659.25, 587.33, 523.25, 0, 392, 0, 440, 0, 329.63, 0, 440, 0];
+
+        this.bgmTimer = setInterval(() => {
+          if (!this.bgmEnabled || !this.enabled) return;
+          const bFreq = bassline[this.bgmNoteIndex % bassline.length];
+          const lFreq = leadline[this.bgmNoteIndex % leadline.length];
+
+          if (bFreq > 0) this.playTone(bFreq, 'triangle', 0.15, 0.03);
+          if (lFreq > 0) this.playTone(lFreq, 'square', 0.1, 0.02);
+
+          this.bgmNoteIndex++;
+        }, 180);
+      }
+
+      stopBgm() {
+        this.bgmEnabled = false;
+        if (this.bgmTimer) {
+          clearInterval(this.bgmTimer);
+          this.bgmTimer = null;
+        }
+      }
+    }
+
+    const audio = new RetroAudio();
+
+    // ALPINE.JS APP COMPONENT
+    function platformerApp() {
+      return {
+        screen: 'start', // 'start', 'playing', 'paused', 'characterSelect', 'levelSelect', 'gameover', 'levelClear'
+        activeModal: null, // 'controls', 'settings'
+
+        score: 0,
+        coins: 0,
+        totalLevelCoins: 0,
+        lives: 3,
+        maxLives: 3,
+        levelTimer: 0,
+        timerInterval: null,
+        highScore: 0,
+        gameOverReason: 'Kamu kehabisan nyawa!',
+        victoryStars: 3,
+
+        currentLevel: 1,
+        selectedHeroId: 'leo',
+
+        settings: {
+          sound: true,
+          music: false,
+          scanlines: true,
+        },
+
+        unlockedLevels: [1],
+        levelStars: { 1: 0, 2: 0, 3: 0 },
+
+        heroes: [
+          {
+            id: 'leo',
+            name: 'Leo Si Petualang',
+            role: 'Seimbang & Lincah',
+            icon: '🤠',
+            color: '#06b6d4',
+            stats: { speed: 4, jump: 4 },
+            specialDesc: 'Lompatan tinggi & stabil',
+            hasDoubleJump: false,
+            dashCool: 1.2
+          },
+          {
+            id: 'zara',
+            name: 'Zara Si Ninja',
+            role: 'Lompat Ganda',
+            icon: '🥷',
+            color: '#8b5cf6',
+            stats: { speed: 5, jump: 3 },
+            specialDesc: 'Lompat Ganda di Udara',
+            hasDoubleJump: true,
+            dashCool: 0.8
+          },
+          {
+            id: 'toby',
+            name: 'Toby Si Robot',
+            role: 'Kokoh & Magnetik',
+            icon: '🤖',
+            color: '#10b981',
+            stats: { speed: 3, jump: 4 },
+            specialDesc: 'Radius Koin Luas & 4 Nyawa',
+            hasDoubleJump: false,
+            dashCool: 1.5
+          }
+        ],
+
+        levelsConfig: [
+          {
+            id: 1,
+            name: 'Lembah Hijau',
+            theme: 'Pulau Rumput Terbuka',
+            icon: '🌿',
+            coinsCount: 15,
+            parTime: 40
+          },
+          {
+            id: 2,
+            name: 'Gua Kristal',
+            theme: 'Platform Bergerak & Pegas',
+            icon: '💎',
+            coinsCount: 22,
+            parTime: 55
+          },
+          {
+            id: 3,
+            name: 'Kastil Lahar',
+            theme: 'Rintangan Api & Lahar Panas',
+            icon: '🌋',
+            coinsCount: 28,
+            parTime: 70
+          }
+        ],
+
+        get currentHero() {
+          return this.heroes.find(h => h.id === this.selectedHeroId) || this.heroes[0];
+        },
+
+        get currentLevelData() {
+          return this.levelsConfig.find(l => l.id === this.currentLevel);
+        },
 
         init() {
-          if (!this.ctx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (AudioContext) {
-              this.ctx = new AudioContext();
-            }
-          }
-          if (this.ctx && this.ctx.state === 'suspended') {
-            this.ctx.resume();
-          }
-        }
+          this.loadSavedData();
+          this.initGameEngine();
+        },
 
-        playTone(freq, type = 'square', duration = 0.1, gainVal = 0.1, rampToFreq = null) {
-          if (!this.enabled) return;
+        loadSavedData() {
           try {
-            this.init();
-            if (!this.ctx) return;
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
+            const hs = localStorage.getItem('pixelleap_highscore');
+            if (hs) this.highScore = parseInt(hs, 10) || 0;
 
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-            if (rampToFreq !== null) {
-              osc.frequency.exponentialRampToValueAtTime(Math.max(1, rampToFreq), this.ctx.currentTime + duration);
+            const unl = localStorage.getItem('pixelleap_unlocked');
+            if (unl) this.unlockedLevels = JSON.parse(unl);
+
+            const stars = localStorage.getItem('pixelleap_stars');
+            if (stars) this.levelStars = JSON.parse(stars);
+
+            const st = localStorage.getItem('pixelleap_settings');
+            if (st) {
+              const parsed = JSON.parse(st);
+              this.settings.sound = parsed.sound ?? true;
+              this.settings.music = parsed.music ?? false;
+              this.settings.scanlines = parsed.scanlines ?? true;
             }
-
-            gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
-
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
-
-            osc.start();
-            osc.stop(this.ctx.currentTime + duration);
-          } catch(e) {}
-        }
-
-        jump() {
-          this.playTone(150, 'square', 0.14, 0.12, 440);
-        }
-
-        doubleJump() {
-          this.playTone(300, 'sine', 0.12, 0.12, 600);
-        }
-
-        dash() {
-          this.playTone(400, 'sawtooth', 0.09, 0.08, 150);
-        }
-
-        coin() {
-          this.playTone(987.77, 'sine', 0.08, 0.1); // B5
-          setTimeout(() => this.playTone(1318.51, 'sine', 0.18, 0.12), 70); // E6
-        }
-
-        gem() {
-          this.playTone(659.25, 'sine', 0.06, 0.1);
-          setTimeout(() => this.playTone(830.61, 'sine', 0.06, 0.1), 50);
-          setTimeout(() => this.playTone(1174.66, 'sine', 0.16, 0.12), 100);
-        }
-
-        spring() {
-          this.playTone(220, 'triangle', 0.35, 0.15, 880);
-        }
-
-        stomp() {
-          this.playTone(300, 'sawtooth', 0.1, 0.15, 80);
-        }
-
-        hit() {
-          this.playTone(180, 'sawtooth', 0.25, 0.2, 50);
-        }
-
-        win() {
-          const notes = [523.25, 659.25, 783.99, 1046.50];
-          notes.forEach((f, idx) => {
-            setTimeout(() => this.playTone(f, 'triangle', 0.22, 0.15), idx * 120);
-          });
-        }
-
-        gameover() {
-          const notes = [440, 392, 349.23, 293.66];
-          notes.forEach((f, idx) => {
-            setTimeout(() => this.playTone(f, 'sawtooth', 0.25, 0.15, f * 0.8), idx * 150);
-          });
-        }
-
-        // Procedural retro 8-bit chiptune loop
-        startBgm() {
-          this.bgmEnabled = true;
-          this.init();
-          if (this.bgmTimer) clearInterval(this.bgmTimer);
-
-          const bassline = [110, 110, 130.81, 146.83, 110, 110, 164.81, 146.83, 98, 98, 123.47, 130.81, 82.41, 98, 110, 130.81];
-          const leadline = [440, 0, 523.25, 0, 659.25, 587.33, 523.25, 0, 392, 0, 440, 0, 329.63, 0, 440, 0];
-
-          this.bgmTimer = setInterval(() => {
-            if (!this.bgmEnabled || !this.enabled) return;
-            const bFreq = bassline[this.bgmNoteIndex % bassline.length];
-            const lFreq = leadline[this.bgmNoteIndex % leadline.length];
-
-            if (bFreq > 0) this.playTone(bFreq, 'triangle', 0.15, 0.03);
-            if (lFreq > 0) this.playTone(lFreq, 'square', 0.1, 0.02);
-
-            this.bgmNoteIndex++;
-          }, 180);
-        }
-
-        stopBgm() {
-          this.bgmEnabled = false;
-          if (this.bgmTimer) {
-            clearInterval(this.bgmTimer);
-            this.bgmTimer = null;
-          }
-        }
-      }
-
-      const audio = new RetroAudio();
-
-      // ALPINE.JS APP COMPONENT
-      function platformerApp() {
-        return {
-          screen: 'start', // 'start', 'playing', 'paused', 'characterSelect', 'levelSelect', 'gameover', 'levelClear'
-          activeModal: null, // 'controls', 'settings'
-          
-          score: 0,
-          coins: 0,
-          totalLevelCoins: 0,
-          lives: 3,
-          maxLives: 3,
-          levelTimer: 0,
-          timerInterval: null,
-          highScore: 0,
-          gameOverReason: 'Kamu kehabisan nyawa!',
-          victoryStars: 3,
-
-          currentLevel: 1,
-          selectedHeroId: 'leo',
-
-          settings: {
-            sound: true,
-            music: false,
-            scanlines: true,
-          },
-
-          unlockedLevels: [1],
-          levelStars: { 1: 0, 2: 0, 3: 0 },
-
-          heroes: [
-            {
-              id: 'leo',
-              name: 'Leo Si Petualang',
-              role: 'Seimbang & Lincah',
-              icon: '🤠',
-              color: '#06b6d4',
-              stats: { speed: 4, jump: 4 },
-              specialDesc: 'Lompatan tinggi & stabil',
-              hasDoubleJump: false,
-              dashCool: 1.2
-            },
-            {
-              id: 'zara',
-              name: 'Zara Si Ninja',
-              role: 'Lompat Ganda',
-              icon: '🥷',
-              color: '#8b5cf6',
-              stats: { speed: 5, jump: 3 },
-              specialDesc: 'Lompat Ganda di Udara',
-              hasDoubleJump: true,
-              dashCool: 0.8
-            },
-            {
-              id: 'toby',
-              name: 'Toby Si Robot',
-              role: 'Kokoh & Magnetik',
-              icon: '🤖',
-              color: '#10b981',
-              stats: { speed: 3, jump: 4 },
-              specialDesc: 'Radius Koin Luas & 4 Nyawa',
-              hasDoubleJump: false,
-              dashCool: 1.5
-            }
-          ],
-
-          levelsConfig: [
-            {
-              id: 1,
-              name: 'Lembah Hijau',
-              theme: 'Pulau Rumput Terbuka',
-              icon: '🌿',
-              coinsCount: 15,
-              parTime: 40
-            },
-            {
-              id: 2,
-              name: 'Gua Kristal',
-              theme: 'Platform Bergerak & Pegas',
-              icon: '💎',
-              coinsCount: 22,
-              parTime: 55
-            },
-            {
-              id: 3,
-              name: 'Kastil Lahar',
-              theme: 'Rintangan Api & Lahar Panas',
-              icon: '🌋',
-              coinsCount: 28,
-              parTime: 70
-            }
-          ],
-
-          get currentHero() {
-            return this.heroes.find(h => h.id === this.selectedHeroId) || this.heroes[0];
-          },
-
-          get currentLevelData() {
-            return this.levelsConfig.find(l => l.id === this.currentLevel);
-          },
-
-          init() {
-            this.loadSavedData();
-            this.initGameEngine();
-          },
-
-          loadSavedData() {
-            try {
-              const hs = localStorage.getItem('pixelleap_highscore');
-              if (hs) this.highScore = parseInt(hs, 10) || 0;
-
-              const unl = localStorage.getItem('pixelleap_unlocked');
-              if (unl) this.unlockedLevels = JSON.parse(unl);
-
-              const stars = localStorage.getItem('pixelleap_stars');
-              if (stars) this.levelStars = JSON.parse(stars);
-
-              const st = localStorage.getItem('pixelleap_settings');
-              if (st) {
-                const parsed = JSON.parse(st);
-                this.settings.sound = parsed.sound ?? true;
-                this.settings.music = parsed.music ?? false;
-                this.settings.scanlines = parsed.scanlines ?? true;
-              }
-              audio.enabled = this.settings.sound;
-            } catch(e) {}
-          },
-
-          saveSettings() {
-            try {
-              localStorage.setItem('pixelleap_settings', JSON.stringify(this.settings));
-            } catch(e) {}
-          },
-
-          saveProgress() {
-            try {
-              localStorage.setItem('pixelleap_highscore', this.highScore.toString());
-              localStorage.setItem('pixelleap_unlocked', JSON.stringify(this.unlockedLevels));
-              localStorage.setItem('pixelleap_stars', JSON.stringify(this.levelStars));
-            } catch(e) {}
-          },
-
-          resetProgress() {
-            if (confirm('Yakin ingin mereset progres game dan skor tertinggi?')) {
-              this.highScore = 0;
-              this.unlockedLevels = [1];
-              this.levelStars = { 1: 0, 2: 0, 3: 0 };
-              this.saveProgress();
-              alert('Progres berhasil direset!');
-            }
-          },
-
-          isLevelUnlocked(lvlId) {
-            return this.unlockedLevels.includes(lvlId);
-          },
-
-          getLevelStars(lvlId) {
-            return this.levelStars[lvlId] || 0;
-          },
-
-          selectHero(heroId) {
-            this.selectedHeroId = heroId;
-            audio.coin();
-          },
-
-          goToScreen(newScreen) {
-            this.screen = newScreen;
-            if (newScreen === 'start') {
-              this.stopTimer();
-            }
-          },
-
-          openModal(name) {
-            this.activeModal = name;
-          },
-
-          closeModal() {
-            this.activeModal = null;
-          },
-
-          toggleAudio() {
-            this.settings.sound = !this.settings.sound;
             audio.enabled = this.settings.sound;
-            if (this.settings.sound) audio.coin();
-            this.saveSettings();
-          },
+          } catch (e) { }
+        },
 
-          toggleBgm() {
-            this.settings.music = !this.settings.music;
-            if (this.settings.music) {
-              audio.startBgm();
-            } else {
-              audio.stopBgm();
-            }
-            this.saveSettings();
-          },
+        saveSettings() {
+          try {
+            localStorage.setItem('pixelleap_settings', JSON.stringify(this.settings));
+          } catch (e) { }
+        },
 
-          formatTime(seconds) {
-            const m = Math.floor(seconds / 60);
-            const s = Math.floor(seconds % 60);
-            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-          },
+        saveProgress() {
+          try {
+            localStorage.setItem('pixelleap_highscore', this.highScore.toString());
+            localStorage.setItem('pixelleap_unlocked', JSON.stringify(this.unlockedLevels));
+            localStorage.setItem('pixelleap_stars', JSON.stringify(this.levelStars));
+          } catch (e) { }
+        },
 
-          startTimer() {
-            this.stopTimer();
-            this.levelTimer = 0;
-            this.timerInterval = setInterval(() => {
-              if (this.screen === 'playing') {
-                this.levelTimer += 1;
-              }
-            }, 1000);
-          },
-
-          stopTimer() {
-            if (this.timerInterval) {
-              clearInterval(this.timerInterval);
-              this.timerInterval = null;
-            }
-          },
-
-          pauseGame() {
-            if (this.screen === 'playing') {
-              this.screen = 'paused';
-            }
-          },
-
-          resumeGame() {
-            if (this.screen === 'paused') {
-              this.screen = 'playing';
-            }
-          },
-
-          startGame(lvlId = 1) {
-            this.currentLevel = lvlId;
-            this.score = 0;
-            this.coins = 0;
-            this.lives = this.selectedHeroId === 'toby' ? 4 : 3;
-            this.maxLives = this.lives;
-            this.screen = 'playing';
-            this.startTimer();
-            if (this.settings.music) audio.startBgm();
-            
-            // Build level in engine
-            loadLevel(this.currentLevel, this.currentHero);
-          },
-
-          restartLevel() {
-            this.startGame(this.currentLevel);
-          },
-
-          nextLevel() {
-            if (this.currentLevel < this.levelsConfig.length) {
-              this.startGame(this.currentLevel + 1);
-            } else {
-              this.goToScreen('start');
-            }
-          },
-
-          onLevelWin() {
-            this.stopTimer();
-            this.screen = 'levelClear';
-            audio.win();
-
-            // Calculate stars
-            const target = this.currentLevelData ? this.currentLevelData.parTime : 60;
-            const collectedRatio = this.totalLevelCoins > 0 ? (this.coins / this.totalLevelCoins) : 1;
-            
-            let stars = 1;
-            if (collectedRatio >= 0.75) stars = 2;
-            if (collectedRatio >= 0.95 && this.levelTimer <= target) stars = 3;
-            this.victoryStars = stars;
-
-            if (stars > (this.levelStars[this.currentLevel] || 0)) {
-              this.levelStars[this.currentLevel] = stars;
-            }
-
-            // Unlock next level
-            const nextLvl = this.currentLevel + 1;
-            if (nextLvl <= this.levelsConfig.length && !this.unlockedLevels.includes(nextLvl)) {
-              this.unlockedLevels.push(nextLvl);
-            }
-
-            // Update high score
-            if (this.score > this.highScore) {
-              this.highScore = this.score;
-            }
+        resetProgress() {
+          if (confirm('Yakin ingin mereset progres game dan skor tertinggi?')) {
+            this.highScore = 0;
+            this.unlockedLevels = [1];
+            this.levelStars = { 1: 0, 2: 0, 3: 0 };
             this.saveProgress();
-          },
+            alert('Progres berhasil direset!');
+          }
+        },
 
-          onGameOver(reason = 'Kamu kehabisan nyawa!') {
+        isLevelUnlocked(lvlId) {
+          return this.unlockedLevels.includes(lvlId);
+        },
+
+        getLevelStars(lvlId) {
+          return this.levelStars[lvlId] || 0;
+        },
+
+        selectHero(heroId) {
+          this.selectedHeroId = heroId;
+          audio.coin();
+        },
+
+        goToScreen(newScreen) {
+          this.screen = newScreen;
+          if (newScreen === 'start') {
             this.stopTimer();
-            this.gameOverReason = reason;
-            this.screen = 'gameover';
-            audio.gameover();
+          }
+        },
 
-            if (this.score > this.highScore) {
-              this.highScore = this.score;
-              this.saveProgress();
-            }
-          },
+        openModal(name) {
+          this.activeModal = name;
+        },
 
-          // Controls & keys bridging
-          handleKeyDown(e) {
-            if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-              e.preventDefault();
-            }
+        closeModal() {
+          this.activeModal = null;
+        },
 
-            if (e.code === 'KeyP' || e.code === 'Escape') {
-              if (this.screen === 'playing') this.pauseGame();
-              else if (this.screen === 'paused') this.resumeGame();
-              return;
-            }
+        toggleAudio() {
+          this.settings.sound = !this.settings.sound;
+          audio.enabled = this.settings.sound;
+          if (this.settings.sound) audio.coin();
+          this.saveSettings();
+        },
 
-            if (e.code === 'KeyR' && (this.screen === 'playing' || this.screen === 'gameover')) {
-              this.restartLevel();
-              return;
-            }
+        toggleBgm() {
+          this.settings.music = !this.settings.music;
+          if (this.settings.music) {
+            audio.startBgm();
+          } else {
+            audio.stopBgm();
+          }
+          this.saveSettings();
+        },
 
+        formatTime(seconds) {
+          const m = Math.floor(seconds / 60);
+          const s = Math.floor(seconds % 60);
+          return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        },
+
+        startTimer() {
+          this.stopTimer();
+          this.levelTimer = 0;
+          this.timerInterval = setInterval(() => {
             if (this.screen === 'playing') {
-              gameKeys[e.code] = true;
-              if (e.code === 'KeyA' || e.code === 'ArrowLeft') gameKeys['ArrowLeft'] = true;
-              if (e.code === 'KeyD' || e.code === 'ArrowRight') gameKeys['ArrowRight'] = true;
-              if (e.code === 'KeyW' || e.code === 'ArrowUp' || e.code === 'Space') {
-                gameKeys['Space'] = true;
-                handlePlayerJump();
-              }
-              if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyK') {
-                handlePlayerDash();
-              }
+              this.levelTimer += 1;
             }
-          },
+          }, 1000);
+        },
 
-          handleKeyUp(e) {
-            if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-              e.preventDefault();
-            }
-            gameKeys[e.code] = false;
-            if (e.code === 'KeyA' || e.code === 'ArrowLeft') gameKeys['ArrowLeft'] = false;
-            if (e.code === 'KeyD' || e.code === 'ArrowRight') gameKeys['ArrowRight'] = false;
-            if (e.code === 'KeyW' || e.code === 'ArrowUp' || e.code === 'Space') gameKeys['Space'] = false;
-          },
+        stopTimer() {
+          if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+          }
+        },
 
-          setKey(code, isPressed) {
-            gameKeys[code] = isPressed;
-            if (isPressed && code === 'Space') {
+        pauseGame() {
+          if (this.screen === 'playing') {
+            this.screen = 'paused';
+          }
+        },
+
+        resumeGame() {
+          if (this.screen === 'paused') {
+            this.screen = 'playing';
+          }
+        },
+
+        startGame(lvlId = 1) {
+          this.currentLevel = lvlId;
+          this.score = 0;
+          this.coins = 0;
+          this.lives = this.selectedHeroId === 'toby' ? 4 : 3;
+          this.maxLives = this.lives;
+          this.screen = 'playing';
+          this.startTimer();
+          if (this.settings.music) audio.startBgm();
+
+          // Build level in engine
+          loadLevel(this.currentLevel, this.currentHero);
+        },
+
+        restartLevel() {
+          this.startGame(this.currentLevel);
+        },
+
+        nextLevel() {
+          if (this.currentLevel < this.levelsConfig.length) {
+            this.startGame(this.currentLevel + 1);
+          } else {
+            this.goToScreen('start');
+          }
+        },
+
+        onLevelWin() {
+          this.stopTimer();
+          this.screen = 'levelClear';
+          audio.win();
+
+          // Calculate stars
+          const target = this.currentLevelData ? this.currentLevelData.parTime : 60;
+          const collectedRatio = this.totalLevelCoins > 0 ? (this.coins / this.totalLevelCoins) : 1;
+
+          let stars = 1;
+          if (collectedRatio >= 0.75) stars = 2;
+          if (collectedRatio >= 0.95 && this.levelTimer <= target) stars = 3;
+          this.victoryStars = stars;
+
+          if (stars > (this.levelStars[this.currentLevel] || 0)) {
+            this.levelStars[this.currentLevel] = stars;
+          }
+
+          // Unlock next level
+          const nextLvl = this.currentLevel + 1;
+          if (nextLvl <= this.levelsConfig.length && !this.unlockedLevels.includes(nextLvl)) {
+            this.unlockedLevels.push(nextLvl);
+          }
+
+          // Update high score
+          if (this.score > this.highScore) {
+            this.highScore = this.score;
+          }
+          this.saveProgress();
+        },
+
+        onGameOver(reason = 'Kamu kehabisan nyawa!') {
+          this.stopTimer();
+          this.gameOverReason = reason;
+          this.screen = 'gameover';
+          audio.gameover();
+
+          if (this.score > this.highScore) {
+            this.highScore = this.score;
+            this.saveProgress();
+          }
+        },
+
+        // Controls & keys bridging
+        handleKeyDown(e) {
+          if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+            e.preventDefault();
+          }
+
+          if (e.code === 'KeyP' || e.code === 'Escape') {
+            if (this.screen === 'playing') this.pauseGame();
+            else if (this.screen === 'paused') this.resumeGame();
+            return;
+          }
+
+          if (e.code === 'KeyR' && (this.screen === 'playing' || this.screen === 'gameover')) {
+            this.restartLevel();
+            return;
+          }
+
+          if (this.screen === 'playing') {
+            gameKeys[e.code] = true;
+            if (e.code === 'KeyA' || e.code === 'ArrowLeft') gameKeys['ArrowLeft'] = true;
+            if (e.code === 'KeyD' || e.code === 'ArrowRight') gameKeys['ArrowRight'] = true;
+            if (e.code === 'KeyW' || e.code === 'ArrowUp' || e.code === 'Space') {
+              gameKeys['Space'] = true;
               handlePlayerJump();
             }
-          },
-
-          triggerDash() {
-            if (this.screen === 'playing') {
+            if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyK') {
               handlePlayerDash();
             }
-          },
-
-          onResize() {
-            resizeGameCanvas();
-          },
-
-          initGameEngine() {
-            initCanvasEngine(this);
           }
-        };
-      }
+        },
 
-      // ==========================================
-      // CANVAS 2D RETRO PLATFORMER ENGINE
-      // ==========================================
-      let appInstance = null;
-      let canvas, ctx;
-      const V_WIDTH = 960;
-      const V_HEIGHT = 540;
-      const GRAVITY = 0.55;
-
-      const gameKeys = {
-        ArrowLeft: false,
-        ArrowRight: false,
-        Space: false,
-      };
-
-      // Game state variables
-      let player = null;
-      let platforms = [];
-      let collectibles = [];
-      let enemies = [];
-      let springs = [];
-      let particles = [];
-      let portal = null;
-      let camera = { x: 0, y: 0, targetX: 0, targetY: 0 };
-      let worldBounds = { width: 3200, height: 700 };
-      let lastTime = 0;
-      let animFrameId = null;
-
-      function resizeGameCanvas() {
-        if (!canvas) return;
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = V_WIDTH;
-        canvas.height = V_HEIGHT;
-      }
-
-      function initCanvasEngine(app) {
-        appInstance = app;
-        canvas = document.getElementById('gameCanvas');
-        if (!canvas) return;
-        ctx = canvas.getContext('2d');
-        resizeGameCanvas();
-
-        // Start render loop
-        if (!animFrameId) {
-          lastTime = performance.now();
-          animFrameId = requestAnimationFrame(gameLoop);
-        }
-      }
-
-      function loadLevel(levelNum, heroConfig) {
-        particles = [];
-        
-        // Player setup based on selected hero
-        player = {
-          x: 80,
-          y: 350,
-          w: 32,
-          h: 44,
-          vx: 0,
-          vy: 0,
-          speed: heroConfig.stats.speed === 5 ? 4.8 : (heroConfig.stats.speed === 4 ? 4.2 : 3.6),
-          jumpForce: heroConfig.stats.jump === 4 ? -12.5 : -11.5,
-          isGrounded: false,
-          facingRight: true,
-          coyoteTime: 0,
-          jumpBuffer: 0,
-          jumpsLeft: heroConfig.hasDoubleJump ? 2 : 1,
-          maxJumps: heroConfig.hasDoubleJump ? 2 : 1,
-          dashTimer: 0,
-          dashCooldown: 0,
-          invulnerableTimer: 0,
-          color: heroConfig.color,
-          icon: heroConfig.icon,
-          heroId: heroConfig.id,
-          magnetRange: heroConfig.id === 'toby' ? 120 : 60,
-          squashY: 1,
-          stretchX: 1
-        };
-
-        camera.x = 0;
-        camera.y = 0;
-
-        // Level generation based on levelNum
-        platforms = [];
-        collectibles = [];
-        enemies = [];
-        springs = [];
-
-        if (levelNum === 1) {
-          // LEVEL 1: GREEN VALLEY
-          worldBounds = { width: 2800, height: 600 };
-          
-          // Ground segments
-          platforms.push({ x: 0, y: 480, w: 600, h: 120, type: 'grass' });
-          platforms.push({ x: 680, y: 480, w: 700, h: 120, type: 'grass' });
-          platforms.push({ x: 1480, y: 480, w: 800, h: 120, type: 'grass' });
-          platforms.push({ x: 2380, y: 460, w: 500, h: 140, type: 'grass' });
-
-          // Floating platforms
-          platforms.push({ x: 220, y: 380, w: 120, h: 22, type: 'wood' });
-          platforms.push({ x: 380, y: 310, w: 130, h: 22, type: 'wood' });
-          platforms.push({ x: 560, y: 250, w: 110, h: 22, type: 'wood' });
-
-          // Moving platform across first chasm
-          platforms.push({ 
-            x: 590, y: 420, w: 90, h: 20, type: 'moving', 
-            minX: 580, maxX: 700, vx: 1.5, vy: 0 
-          });
-
-          // Second section platforms
-          platforms.push({ x: 800, y: 390, w: 110, h: 22, type: 'wood' });
-          platforms.push({ x: 960, y: 320, w: 130, h: 22, type: 'wood' });
-          platforms.push({ x: 1150, y: 260, w: 140, h: 22, type: 'wood' });
-          
-          // Crumbling cloud platforms
-          platforms.push({ x: 1340, y: 360, w: 90, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
-          platforms.push({ x: 1440, y: 310, w: 90, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
-
-          // Third section elevated ruins
-          platforms.push({ x: 1650, y: 380, w: 150, h: 22, type: 'wood' });
-          platforms.push({ x: 1880, y: 300, w: 140, h: 22, type: 'wood' });
-          platforms.push({ x: 2100, y: 240, w: 160, h: 22, type: 'wood' });
-
-          // Moving elevator platform
-          platforms.push({ 
-            x: 2300, y: 380, w: 90, h: 20, type: 'moving', 
-            minY: 220, maxY: 440, vx: 0, vy: -1.4 
-          });
-
-          // Collectibles (Coins)
-          const coinPositions = [
-            [250, 340], [420, 270], [600, 210],
-            [840, 350], [1000, 280], [1200, 220],
-            [1380, 320], [1480, 270],
-            [1700, 340], [1930, 260], [2150, 200],
-            [2450, 410], [2520, 410], [2590, 410], [2660, 410]
-          ];
-          coinPositions.forEach(([cx, cy]) => {
-            collectibles.push({ x: cx, y: cy, w: 20, h: 20, type: 'coin', val: 10, anim: Math.random() });
-          });
-
-          // Heart item
-          collectibles.push({ x: 1220, y: 220, w: 22, h: 22, type: 'heart', val: 50, anim: 0 });
-
-          // Springs
-          springs.push({ x: 1050, y: 460, w: 32, h: 20, bounceForce: -16, state: 0 });
-          springs.push({ x: 2000, y: 460, w: 32, h: 20, bounceForce: -17, state: 0 });
-
-          // Enemies (Slimes)
-          enemies.push({ x: 300, y: 450, w: 32, h: 26, type: 'slime', vx: 1.2, minX: 180, maxX: 480, alive: true });
-          enemies.push({ x: 920, y: 450, w: 32, h: 26, type: 'slime', vx: -1.3, minX: 800, maxX: 1200, alive: true });
-          enemies.push({ x: 1750, y: 450, w: 32, h: 26, type: 'slime', vx: 1.4, minX: 1600, maxX: 2000, alive: true });
-          enemies.push({ x: 2480, y: 430, w: 32, h: 26, type: 'slime', vx: -1.2, minX: 2400, maxX: 2700, alive: true });
-
-          // Exit Portal
-          portal = { x: 2720, y: 390, w: 46, h: 70, reached: false };
-
-        } else if (levelNum === 2) {
-          // LEVEL 2: CRYSTAL CAVERN
-          worldBounds = { width: 3300, height: 650 };
-
-          // Ground with cavern pits
-          platforms.push({ x: 0, y: 500, w: 500, h: 150, type: 'crystal_rock' });
-          platforms.push({ x: 600, y: 500, w: 450, h: 150, type: 'crystal_rock' });
-          platforms.push({ x: 1200, y: 500, w: 600, h: 150, type: 'crystal_rock' });
-          platforms.push({ x: 1950, y: 500, w: 600, h: 150, type: 'crystal_rock' });
-          platforms.push({ x: 2700, y: 480, w: 600, h: 170, type: 'crystal_rock' });
-
-          // Crystal ledges & moving platforms
-          platforms.push({ x: 200, y: 410, w: 100, h: 22, type: 'crystal' });
-          platforms.push({ x: 360, y: 330, w: 120, h: 22, type: 'crystal' });
-          platforms.push({ 
-            x: 520, y: 370, w: 90, h: 20, type: 'moving', 
-            minX: 510, maxX: 630, vx: 1.8, vy: 0 
-          });
-
-          platforms.push({ x: 700, y: 400, w: 110, h: 22, type: 'crystal' });
-          platforms.push({ x: 880, y: 310, w: 120, h: 22, type: 'crystal' });
-
-          // Elevators over big spike cavern
-          platforms.push({ 
-            x: 1060, y: 420, w: 90, h: 20, type: 'moving', 
-            minY: 260, maxY: 460, vx: 0, vy: -1.6 
-          });
-
-          platforms.push({ x: 1250, y: 380, w: 130, h: 22, type: 'crystal' });
-          platforms.push({ x: 1450, y: 290, w: 140, h: 22, type: 'crystal' });
-          platforms.push({ x: 1650, y: 220, w: 120, h: 22, type: 'crystal' });
-
-          platforms.push({ 
-            x: 1820, y: 380, w: 100, h: 20, type: 'moving', 
-            minX: 1800, maxX: 1960, vx: 2.0, vy: 0 
-          });
-
-          // Crumbling crystal platforms
-          platforms.push({ x: 2150, y: 420, w: 80, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
-          platforms.push({ x: 2280, y: 360, w: 80, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
-          platforms.push({ x: 2410, y: 300, w: 80, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
-          platforms.push({ x: 2540, y: 240, w: 90, h: 18, type: 'crystal' });
-
-          // High exit ledge
-          platforms.push({ x: 2800, y: 380, w: 140, h: 22, type: 'crystal' });
-          platforms.push({ x: 3000, y: 300, w: 160, h: 22, type: 'crystal' });
-
-          // Collectibles (Coins & Emerald Gems)
-          const coinsLvl2 = [
-            [230, 370], [390, 290], [560, 330],
-            [730, 360], [920, 270], [1080, 230],
-            [1280, 340], [1480, 250], [1680, 180],
-            [1850, 340], [2180, 380], [2310, 320], [2440, 260],
-            [2750, 440], [2840, 340], [3050, 260], [3120, 260]
-          ];
-          coinsLvl2.forEach(([cx, cy]) => {
-            collectibles.push({ x: cx, y: cy, w: 20, h: 20, type: 'coin', val: 10, anim: Math.random() });
-          });
-
-          // Gems
-          collectibles.push({ x: 1680, y: 150, w: 24, h: 24, type: 'gem', val: 50, anim: 0 });
-          collectibles.push({ x: 2570, y: 190, w: 24, h: 24, type: 'gem', val: 50, anim: 0 });
-
-          // Springs
-          springs.push({ x: 420, y: 480, w: 32, h: 20, bounceForce: -16.5, state: 0 });
-          springs.push({ x: 1350, y: 480, w: 32, h: 20, bounceForce: -17, state: 0 });
-          springs.push({ x: 2050, y: 480, w: 32, h: 20, bounceForce: -18, state: 0 });
-
-          // Enemies: Slimes & Flying Bats
-          enemies.push({ x: 250, y: 470, w: 32, h: 26, type: 'slime', vx: 1.3, minX: 100, maxX: 400, alive: true });
-          enemies.push({ x: 800, y: 260, w: 30, h: 24, type: 'bat', vx: 1.6, minX: 750, maxX: 980, startY: 260, anim: 0, alive: true });
-          enemies.push({ x: 1400, y: 470, w: 32, h: 26, type: 'slime', vx: -1.5, minX: 1250, maxX: 1650, alive: true });
-          enemies.push({ x: 1980, y: 220, w: 30, h: 24, type: 'bat', vx: -1.7, minX: 1850, maxX: 2150, startY: 220, anim: 0, alive: true });
-          enemies.push({ x: 2850, y: 450, w: 32, h: 26, type: 'slime', vx: 1.4, minX: 2750, maxX: 3100, alive: true });
-
-          // Exit Portal
-          portal = { x: 3150, y: 410, w: 46, h: 70, reached: false };
-
-        } else {
-          // LEVEL 3: CASTLE OF LAVA
-          worldBounds = { width: 3600, height: 680 };
-
-          // Castle Stone & Lava pits
-          platforms.push({ x: 0, y: 520, w: 450, h: 160, type: 'lava_rock' });
-          platforms.push({ x: 600, y: 520, w: 400, h: 160, type: 'lava_rock' });
-          platforms.push({ x: 1150, y: 520, w: 500, h: 160, type: 'lava_rock' });
-          platforms.push({ x: 1850, y: 520, w: 550, h: 160, type: 'lava_rock' });
-          platforms.push({ x: 2600, y: 520, w: 450, h: 160, type: 'lava_rock' });
-          platforms.push({ x: 3200, y: 480, w: 400, h: 200, type: 'lava_rock' });
-
-          // Floating lava bricks
-          platforms.push({ x: 180, y: 420, w: 110, h: 24, type: 'castle' });
-          platforms.push({ x: 340, y: 340, w: 120, h: 24, type: 'castle' });
-
-          // Horizontal moving platforms over lava
-          platforms.push({ 
-            x: 480, y: 420, w: 90, h: 20, type: 'moving', 
-            minX: 460, maxX: 610, vx: 2.0, vy: 0 
-          });
-
-          platforms.push({ x: 680, y: 400, w: 100, h: 24, type: 'castle' });
-          platforms.push({ x: 840, y: 310, w: 120, h: 24, type: 'castle' });
-
-          // Vertical moving platform
-          platforms.push({ 
-            x: 1020, y: 400, w: 90, h: 20, type: 'moving', 
-            minY: 220, maxY: 460, vx: 0, vy: -1.8 
-          });
-
-          // Castle fortress structures
-          platforms.push({ x: 1220, y: 390, w: 130, h: 24, type: 'castle' });
-          platforms.push({ x: 1420, y: 300, w: 140, h: 24, type: 'castle' });
-          platforms.push({ x: 1640, y: 220, w: 130, h: 24, type: 'castle' });
-
-          // Fast crumbling bridge
-          platforms.push({ x: 1720, y: 410, w: 80, h: 20, type: 'crumble', timer: 0, falling: false, regen: 0 });
-          platforms.push({ x: 1830, y: 350, w: 80, h: 20, type: 'crumble', timer: 0, falling: false, regen: 0 });
-
-          // Tower ascent
-          platforms.push({ x: 2050, y: 410, w: 120, h: 24, type: 'castle' });
-          platforms.push({ x: 2250, y: 320, w: 130, h: 24, type: 'castle' });
-          platforms.push({ 
-            x: 2450, y: 380, w: 90, h: 20, type: 'moving', 
-            minX: 2420, maxX: 2620, vx: 2.2, vy: 0 
-          });
-
-          platforms.push({ x: 2750, y: 390, w: 120, h: 24, type: 'castle' });
-          platforms.push({ x: 2950, y: 290, w: 140, h: 24, type: 'castle' });
-
-          // Collectibles (Coins & Star Artifacts)
-          const coinsLvl3 = [
-            [210, 380], [370, 300], [520, 380],
-            [710, 360], [870, 270], [1050, 200],
-            [1260, 350], [1460, 260], [1670, 180],
-            [2080, 370], [2280, 280], [2490, 340],
-            [2780, 350], [2980, 250], [3300, 440], [3380, 440]
-          ];
-          coinsLvl3.forEach(([cx, cy]) => {
-            collectibles.push({ x: cx, y: cy, w: 20, h: 20, type: 'coin', val: 10, anim: Math.random() });
-          });
-
-          // Gems & Star
-          collectibles.push({ x: 1670, y: 140, w: 24, h: 24, type: 'star', val: 100, anim: 0 });
-          collectibles.push({ x: 2980, y: 200, w: 24, h: 24, type: 'star', val: 100, anim: 0 });
-
-          // Springs
-          springs.push({ x: 400, y: 500, w: 32, h: 20, bounceForce: -17, state: 0 });
-          springs.push({ x: 1300, y: 500, w: 32, h: 20, bounceForce: -17.5, state: 0 });
-          springs.push({ x: 2150, y: 500, w: 32, h: 20, bounceForce: -18, state: 0 });
-
-          // Enemies: Magma Slimes & Fire Bats
-          enemies.push({ x: 250, y: 490, w: 32, h: 26, type: 'slime', vx: 1.5, minX: 100, maxX: 380, alive: true, isFire: true });
-          enemies.push({ x: 750, y: 490, w: 32, h: 26, type: 'slime', vx: -1.6, minX: 650, maxX: 950, alive: true, isFire: true });
-          enemies.push({ x: 1350, y: 240, w: 30, h: 24, type: 'bat', vx: 1.8, minX: 1250, maxX: 1550, startY: 240, anim: 0, alive: true });
-          enemies.push({ x: 2100, y: 490, w: 32, h: 26, type: 'slime', vx: 1.5, minX: 1950, maxX: 2350, alive: true, isFire: true });
-          enemies.push({ x: 2800, y: 220, w: 30, h: 24, type: 'bat', vx: -1.9, minX: 2700, maxX: 3050, startY: 220, anim: 0, alive: true });
-
-          // Exit Portal
-          portal = { x: 3450, y: 410, w: 46, h: 70, reached: false };
-        }
-
-        appInstance.totalLevelCoins = collectibles.filter(c => c.type === 'coin').length;
-      }
-
-      function handlePlayerJump() {
-        if (!player || appInstance.screen !== 'playing') return;
-
-        // Grounded jump or coyote jump
-        if (player.isGrounded || player.coyoteTime > 0) {
-          player.vy = player.jumpForce;
-          player.isGrounded = false;
-          player.coyoteTime = 0;
-          player.squashY = 1.35;
-          player.stretchX = 0.75;
-          audio.jump();
-          createDustParticles(player.x + player.w/2, player.y + player.h, '#ffffff');
-          return;
-        }
-
-        // Double jump if allowed
-        if (player.jumpsLeft > 1) {
-          player.vy = player.jumpForce * 0.95;
-          player.jumpsLeft--;
-          player.squashY = 1.3;
-          player.stretchX = 0.8;
-          audio.doubleJump();
-          createDustParticles(player.x + player.w/2, player.y + player.h, '#c084fc');
-        } else {
-          // Jump buffer
-          player.jumpBuffer = 8;
-        }
-      }
-
-      function handlePlayerDash() {
-        if (!player || appInstance.screen !== 'playing') return;
-        if (player.dashCooldown <= 0) {
-          player.dashTimer = 12; // 12 frames of dash
-          player.dashCooldown = 60; // 1 second cooldown
-          const dir = player.facingRight ? 1 : -1;
-          player.vx = dir * 12;
-          player.vy = 0;
-          audio.dash();
-
-          // Create dash ghost particles
-          for (let i = 0; i < 5; i++) {
-            particles.push({
-              x: player.x + Math.random() * 10 - 5,
-              y: player.y + Math.random() * 10,
-              vx: -dir * (Math.random() * 2 + 1),
-              vy: (Math.random() - 0.5) * 2,
-              life: 18,
-              maxLife: 18,
-              color: '#38bdf8',
-              size: 4
-            });
+        handleKeyUp(e) {
+          if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+            e.preventDefault();
           }
-        }
-      }
+          gameKeys[e.code] = false;
+          if (e.code === 'KeyA' || e.code === 'ArrowLeft') gameKeys['ArrowLeft'] = false;
+          if (e.code === 'KeyD' || e.code === 'ArrowRight') gameKeys['ArrowRight'] = false;
+          if (e.code === 'KeyW' || e.code === 'ArrowUp' || e.code === 'Space') gameKeys['Space'] = false;
+        },
 
-      function createDustParticles(x, y, color = '#cbd5e1') {
-        for (let i = 0; i < 6; i++) {
-          particles.push({
-            x: x + (Math.random() - 0.5) * 16,
-            y: y - 2,
-            vx: (Math.random() - 0.5) * 3,
-            vy: -Math.random() * 2.2 - 0.5,
-            life: 16,
-            maxLife: 16,
-            color: color,
-            size: Math.random() * 3 + 2
-          });
-        }
-      }
-
-      function createBurstParticles(x, y, count = 12, color = '#facc15') {
-        for (let i = 0; i < count; i++) {
-          const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.4);
-          const speed = Math.random() * 4 + 2;
-          particles.push({
-            x: x,
-            y: y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            life: 25,
-            maxLife: 25,
-            color: color,
-            size: Math.random() * 3.5 + 2.5
-          });
-        }
-      }
-
-      function hurtPlayer(damage = 1, reason = 'Kamu terkena musuh!') {
-        if (!player || player.invulnerableTimer > 0) return;
-        
-        appInstance.lives -= damage;
-        audio.hit();
-        player.invulnerableTimer = 60; // 1 second invulnerability
-        player.vy = -7;
-        player.vx = player.facingRight ? -4 : 4;
-        createBurstParticles(player.x + player.w/2, player.y + player.h/2, 10, '#ef4444');
-
-        if (appInstance.lives <= 0) {
-          appInstance.onGameOver(reason);
-        }
-      }
-
-      // Main Game Loop (60 FPS)
-      function gameLoop(now) {
-        animFrameId = requestAnimationFrame(gameLoop);
-
-        // Calculate delta time
-        const dt = Math.min((now - lastTime) / 1000, 0.1);
-        lastTime = now;
-
-        if (appInstance.screen === 'playing') {
-          updateGamePhysics();
-        }
-
-        renderGameCanvas();
-      }
-
-      function updateGamePhysics() {
-        if (!player) return;
-
-        // Invulnerability countdown
-        if (player.invulnerableTimer > 0) player.invulnerableTimer--;
-
-        // Dash cooldown & active dash
-        if (player.dashCooldown > 0) player.dashCooldown--;
-        
-        if (player.dashTimer > 0) {
-          player.dashTimer--;
-          player.x += player.vx;
-          // Spawn trail
-          if (Math.random() > 0.3) {
-            particles.push({
-              x: player.x,
-              y: player.y,
-              vx: 0,
-              vy: 0,
-              life: 10,
-              maxLife: 10,
-              color: '#06b6d4',
-              size: 5
-            });
-          }
-        } else {
-          // Standard horizontal movement
-          const moveLeft = gameKeys['ArrowLeft'];
-          const moveRight = gameKeys['ArrowRight'];
-
-          if (moveLeft) {
-            player.vx = -player.speed;
-            player.facingRight = false;
-          } else if (moveRight) {
-            player.vx = player.speed;
-            player.facingRight = true;
-          } else {
-            // Friction
-            player.vx *= 0.75;
-            if (Math.abs(player.vx) < 0.1) player.vx = 0;
-          }
-
-          // Apply Gravity
-          player.vy += GRAVITY;
-          if (player.vy > 14) player.vy = 14; // Terminal velocity
-        }
-
-        // Squash & stretch recovery
-        player.squashY += (1 - player.squashY) * 0.15;
-        player.stretchX += (1 - player.stretchX) * 0.15;
-
-        // Move horizontally and check collisions
-        player.x += player.vx;
-        checkPlatformCollisions(true);
-
-        // Move vertically and check collisions
-        player.isGrounded = false;
-        player.y += player.vy;
-        checkPlatformCollisions(false);
-
-        // Coyote time & Jump buffer
-        if (player.isGrounded) {
-          player.coyoteTime = 8;
-          player.jumpsLeft = player.maxJumps;
-        } else if (player.coyoteTime > 0) {
-          player.coyoteTime--;
-        }
-
-        if (player.jumpBuffer > 0) {
-          player.jumpBuffer--;
-          if (player.isGrounded) {
+        setKey(code, isPressed) {
+          gameKeys[code] = isPressed;
+          if (isPressed && code === 'Space') {
             handlePlayerJump();
           }
-        }
+        },
 
-        // Update moving & crumbling platforms
-        platforms.forEach(plat => {
-          if (plat.type === 'moving') {
-            if (plat.vx) {
-              plat.x += plat.vx;
-              if (plat.x <= plat.minX || plat.x >= plat.maxX) plat.vx *= -1;
-            }
-            if (plat.vy) {
-              plat.y += plat.vy;
-              if (plat.y <= plat.minY || plat.y >= plat.maxY) plat.vy *= -1;
-            }
-          } else if (plat.type === 'crumble') {
-            if (plat.falling) {
-              plat.timer++;
-              if (plat.timer > 20) {
-                plat.y += 6; // Falls downward
-              }
-              if (plat.timer > 90) {
-                // Regenerate
-                plat.y = plat.originY || plat.y;
-                plat.falling = false;
-                plat.timer = 0;
-              }
-            }
+        triggerDash() {
+          if (this.screen === 'playing') {
+            handlePlayerDash();
           }
+        },
+
+        onResize() {
+          resizeGameCanvas();
+        },
+
+        initGameEngine() {
+          initCanvasEngine(this);
+        }
+      };
+    }
+
+    // ==========================================
+    // CANVAS 2D RETRO PLATFORMER ENGINE
+    // ==========================================
+    let appInstance = null;
+    let canvas, ctx;
+    const V_WIDTH = 960;
+    const V_HEIGHT = 540;
+    const GRAVITY = 0.55;
+
+    const gameKeys = {
+      ArrowLeft: false,
+      ArrowRight: false,
+      Space: false,
+    };
+
+    // Game state variables
+    let player = null;
+    let platforms = [];
+    let collectibles = [];
+    let enemies = [];
+    let springs = [];
+    let particles = [];
+    let portal = null;
+    let camera = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    let worldBounds = { width: 3200, height: 700 };
+    let lastTime = 0;
+    let animFrameId = null;
+
+    function resizeGameCanvas() {
+      if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = V_WIDTH;
+      canvas.height = V_HEIGHT;
+    }
+
+    function initCanvasEngine(app) {
+      appInstance = app;
+      canvas = document.getElementById('gameCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      resizeGameCanvas();
+
+      // Start render loop
+      if (!animFrameId) {
+        lastTime = performance.now();
+        animFrameId = requestAnimationFrame(gameLoop);
+      }
+    }
+
+    function loadLevel(levelNum, heroConfig) {
+      particles = [];
+
+      // Player setup based on selected hero
+      player = {
+        x: 80,
+        y: 350,
+        w: 32,
+        h: 44,
+        vx: 0,
+        vy: 0,
+        speed: heroConfig.stats.speed === 5 ? 4.8 : (heroConfig.stats.speed === 4 ? 4.2 : 3.6),
+        jumpForce: heroConfig.stats.jump === 4 ? -12.5 : -11.5,
+        isGrounded: false,
+        facingRight: true,
+        coyoteTime: 0,
+        jumpBuffer: 0,
+        jumpsLeft: heroConfig.hasDoubleJump ? 2 : 1,
+        maxJumps: heroConfig.hasDoubleJump ? 2 : 1,
+        dashTimer: 0,
+        dashCooldown: 0,
+        invulnerableTimer: 0,
+        color: heroConfig.color,
+        icon: heroConfig.icon,
+        heroId: heroConfig.id,
+        magnetRange: heroConfig.id === 'toby' ? 120 : 60,
+        squashY: 1,
+        stretchX: 1
+      };
+
+      camera.x = 0;
+      camera.y = 0;
+
+      // Level generation based on levelNum
+      platforms = [];
+      collectibles = [];
+      enemies = [];
+      springs = [];
+
+      if (levelNum === 1) {
+        // LEVEL 1: GREEN VALLEY
+        worldBounds = { width: 2800, height: 600 };
+
+        // Ground segments
+        platforms.push({ x: 0, y: 480, w: 600, h: 120, type: 'grass' });
+        platforms.push({ x: 680, y: 480, w: 700, h: 120, type: 'grass' });
+        platforms.push({ x: 1480, y: 480, w: 800, h: 120, type: 'grass' });
+        platforms.push({ x: 2380, y: 460, w: 500, h: 140, type: 'grass' });
+
+        // Floating platforms
+        platforms.push({ x: 220, y: 380, w: 120, h: 22, type: 'wood' });
+        platforms.push({ x: 380, y: 310, w: 130, h: 22, type: 'wood' });
+        platforms.push({ x: 560, y: 250, w: 110, h: 22, type: 'wood' });
+
+        // Moving platform across first chasm
+        platforms.push({
+          x: 590, y: 420, w: 90, h: 20, type: 'moving',
+          minX: 580, maxX: 700, vx: 1.5, vy: 0
         });
 
-        // Update Springs
-        springs.forEach(spr => {
-          if (spr.state > 0) spr.state--;
-          // Collision with player
-          if (
-            player.x + player.w > spr.x &&
-            player.x < spr.x + spr.w &&
-            player.y + player.h >= spr.y &&
-            player.y + player.h <= spr.y + spr.h + 10 &&
-            player.vy > 0
-          ) {
-            player.vy = spr.bounceForce;
-            player.y = spr.y - player.h;
-            player.isGrounded = false;
-            player.squashY = 1.45;
-            player.stretchX = 0.65;
-            spr.state = 15;
-            audio.spring();
-            createBurstParticles(spr.x + spr.w/2, spr.y, 8, '#38bdf8');
-          }
+        // Second section platforms
+        platforms.push({ x: 800, y: 390, w: 110, h: 22, type: 'wood' });
+        platforms.push({ x: 960, y: 320, w: 130, h: 22, type: 'wood' });
+        platforms.push({ x: 1150, y: 260, w: 140, h: 22, type: 'wood' });
+
+        // Crumbling cloud platforms
+        platforms.push({ x: 1340, y: 360, w: 90, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
+        platforms.push({ x: 1440, y: 310, w: 90, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
+
+        // Third section elevated ruins
+        platforms.push({ x: 1650, y: 380, w: 150, h: 22, type: 'wood' });
+        platforms.push({ x: 1880, y: 300, w: 140, h: 22, type: 'wood' });
+        platforms.push({ x: 2100, y: 240, w: 160, h: 22, type: 'wood' });
+
+        // Moving elevator platform
+        platforms.push({
+          x: 2300, y: 380, w: 90, h: 20, type: 'moving',
+          minY: 220, maxY: 440, vx: 0, vy: -1.4
         });
 
-        // Update Collectibles (Coins & Gems with magnetic attraction)
-        collectibles.forEach((item, index) => {
-          item.anim = (item.anim || 0) + 0.05;
-          const cx = item.x + item.w / 2;
-          const cy = item.y + item.h / 2;
-          const px = player.x + player.w / 2;
-          const py = player.y + player.h / 2;
-          const dist = Math.hypot(px - cx, py - cy);
-
-          // Magnetic pull towards player
-          if (dist < player.magnetRange && item.type !== 'heart') {
-            item.x += (px - cx) * 0.12;
-            item.y += (py - cy) * 0.12;
-          }
-
-          // Pickup collision
-          if (dist < 26) {
-            if (item.type === 'coin') {
-              appInstance.coins++;
-              appInstance.score += item.val;
-              audio.coin();
-              createBurstParticles(cx, cy, 8, '#facc15');
-            } else if (item.type === 'gem' || item.type === 'star') {
-              appInstance.score += item.val;
-              audio.gem();
-              createBurstParticles(cx, cy, 14, '#38bdf8');
-            } else if (item.type === 'heart') {
-              if (appInstance.lives < appInstance.maxLives) {
-                appInstance.lives++;
-              }
-              appInstance.score += 50;
-              audio.coin();
-              createBurstParticles(cx, cy, 12, '#ef4444');
-            }
-            collectibles.splice(index, 1);
-          }
+        // Collectibles (Coins)
+        const coinPositions = [
+          [250, 340], [420, 270], [600, 210],
+          [840, 350], [1000, 280], [1200, 220],
+          [1380, 320], [1480, 270],
+          [1700, 340], [1930, 260], [2150, 200],
+          [2450, 410], [2520, 410], [2590, 410], [2660, 410]
+        ];
+        coinPositions.forEach(([cx, cy]) => {
+          collectibles.push({ x: cx, y: cy, w: 20, h: 20, type: 'coin', val: 10, anim: Math.random() });
         });
 
-        // Update Enemies
-        enemies.forEach((enemy, index) => {
-          if (!enemy.alive) return;
+        // Heart item
+        collectibles.push({ x: 1220, y: 220, w: 22, h: 22, type: 'heart', val: 50, anim: 0 });
 
-          if (enemy.type === 'slime') {
-            enemy.x += enemy.vx;
-            if (enemy.x <= enemy.minX || enemy.x >= enemy.maxX) {
-              enemy.vx *= -1;
-            }
-          } else if (enemy.type === 'bat') {
-            enemy.anim += 0.08;
-            enemy.x += enemy.vx;
-            enemy.y = enemy.startY + Math.sin(enemy.anim) * 25;
-            if (enemy.x <= enemy.minX || enemy.x >= enemy.maxX) {
-              enemy.vx *= -1;
-            }
-          }
+        // Springs
+        springs.push({ x: 1050, y: 460, w: 32, h: 20, bounceForce: -16, state: 0 });
+        springs.push({ x: 2000, y: 460, w: 32, h: 20, bounceForce: -17, state: 0 });
 
-          // Collision with Player
-          if (
-            player.x + player.w > enemy.x &&
-            player.x < enemy.x + enemy.w &&
-            player.y + player.h > enemy.y &&
-            player.y < enemy.y + enemy.h
-          ) {
-            // Check if player is falling on top to STOMP enemy!
-            if (player.vy > 0 && (player.y + player.h - player.vy) <= enemy.y + 12) {
-              // Stomp success!
-              enemy.alive = false;
-              player.vy = -9.5; // Rebound bounce
-              player.squashY = 1.3;
-              appInstance.score += 100;
-              audio.stomp();
-              createBurstParticles(enemy.x + enemy.w/2, enemy.y + enemy.h/2, 14, enemy.isFire ? '#f97316' : '#22c55e');
-            } else {
-              // Player takes damage
-              hurtPlayer(1, enemy.isFire ? 'Terbakar oleh monster api!' : 'Diserang monster!');
-            }
-          }
+        // Enemies (Slimes)
+        enemies.push({ x: 300, y: 450, w: 32, h: 26, type: 'slime', vx: 1.2, minX: 180, maxX: 480, alive: true });
+        enemies.push({ x: 920, y: 450, w: 32, h: 26, type: 'slime', vx: -1.3, minX: 800, maxX: 1200, alive: true });
+        enemies.push({ x: 1750, y: 450, w: 32, h: 26, type: 'slime', vx: 1.4, minX: 1600, maxX: 2000, alive: true });
+        enemies.push({ x: 2480, y: 430, w: 32, h: 26, type: 'slime', vx: -1.2, minX: 2400, maxX: 2700, alive: true });
+
+        // Exit Portal
+        portal = { x: 2720, y: 390, w: 46, h: 70, reached: false };
+
+      } else if (levelNum === 2) {
+        // LEVEL 2: CRYSTAL CAVERN
+        worldBounds = { width: 3300, height: 650 };
+
+        // Ground with cavern pits
+        platforms.push({ x: 0, y: 500, w: 500, h: 150, type: 'crystal_rock' });
+        platforms.push({ x: 600, y: 500, w: 450, h: 150, type: 'crystal_rock' });
+        platforms.push({ x: 1200, y: 500, w: 600, h: 150, type: 'crystal_rock' });
+        platforms.push({ x: 1950, y: 500, w: 600, h: 150, type: 'crystal_rock' });
+        platforms.push({ x: 2700, y: 480, w: 600, h: 170, type: 'crystal_rock' });
+
+        // Crystal ledges & moving platforms
+        platforms.push({ x: 200, y: 410, w: 100, h: 22, type: 'crystal' });
+        platforms.push({ x: 360, y: 330, w: 120, h: 22, type: 'crystal' });
+        platforms.push({
+          x: 520, y: 370, w: 90, h: 20, type: 'moving',
+          minX: 510, maxX: 630, vx: 1.8, vy: 0
         });
 
-        // Check Exit Portal
-        if (portal && !portal.reached) {
-          const pcx = portal.x + portal.w / 2;
-          const pcy = portal.y + portal.h / 2;
-          const plx = player.x + player.w / 2;
-          const ply = player.y + player.h / 2;
-          if (Math.hypot(plx - pcx, ply - pcy) < 40) {
-            portal.reached = true;
-            createBurstParticles(pcx, pcy, 30, '#38bdf8');
-            createBurstParticles(pcx, pcy, 20, '#facc15');
-            setTimeout(() => {
-              appInstance.onLevelWin();
-            }, 600);
-          }
-        }
+        platforms.push({ x: 700, y: 400, w: 110, h: 22, type: 'crystal' });
+        platforms.push({ x: 880, y: 310, w: 120, h: 22, type: 'crystal' });
 
-        // Check falling into void / pit
-        if (player.y > worldBounds.height + 40) {
-          hurtPlayer(3, 'Kamu terjatuh ke jurang tak berdasar!');
-        }
+        // Elevators over big spike cavern
+        platforms.push({
+          x: 1060, y: 420, w: 90, h: 20, type: 'moving',
+          minY: 260, maxY: 460, vx: 0, vy: -1.6
+        });
 
-        // Update Particles
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const p = particles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.12; // Slight gravity for dust
-          p.life--;
-          if (p.life <= 0) particles.splice(i, 1);
-        }
+        platforms.push({ x: 1250, y: 380, w: 130, h: 22, type: 'crystal' });
+        platforms.push({ x: 1450, y: 290, w: 140, h: 22, type: 'crystal' });
+        platforms.push({ x: 1650, y: 220, w: 120, h: 22, type: 'crystal' });
 
-        // Smooth Camera Follow
-        const targetCamX = player.x - V_WIDTH / 3;
-        const targetCamY = player.y - V_HEIGHT / 2;
-        camera.x += (targetCamX - camera.x) * 0.1;
-        camera.y += (targetCamY - camera.y) * 0.08;
+        platforms.push({
+          x: 1820, y: 380, w: 100, h: 20, type: 'moving',
+          minX: 1800, maxX: 1960, vx: 2.0, vy: 0
+        });
 
-        // Clamp camera within world bounds
-        camera.x = Math.max(0, Math.min(camera.x, worldBounds.width - V_WIDTH));
-        camera.y = Math.max(-50, Math.min(camera.y, worldBounds.height - V_HEIGHT + 60));
+        // Crumbling crystal platforms
+        platforms.push({ x: 2150, y: 420, w: 80, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
+        platforms.push({ x: 2280, y: 360, w: 80, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
+        platforms.push({ x: 2410, y: 300, w: 80, h: 18, type: 'crumble', timer: 0, falling: false, regen: 0 });
+        platforms.push({ x: 2540, y: 240, w: 90, h: 18, type: 'crystal' });
+
+        // High exit ledge
+        platforms.push({ x: 2800, y: 380, w: 140, h: 22, type: 'crystal' });
+        platforms.push({ x: 3000, y: 300, w: 160, h: 22, type: 'crystal' });
+
+        // Collectibles (Coins & Emerald Gems)
+        const coinsLvl2 = [
+          [230, 370], [390, 290], [560, 330],
+          [730, 360], [920, 270], [1080, 230],
+          [1280, 340], [1480, 250], [1680, 180],
+          [1850, 340], [2180, 380], [2310, 320], [2440, 260],
+          [2750, 440], [2840, 340], [3050, 260], [3120, 260]
+        ];
+        coinsLvl2.forEach(([cx, cy]) => {
+          collectibles.push({ x: cx, y: cy, w: 20, h: 20, type: 'coin', val: 10, anim: Math.random() });
+        });
+
+        // Gems
+        collectibles.push({ x: 1680, y: 150, w: 24, h: 24, type: 'gem', val: 50, anim: 0 });
+        collectibles.push({ x: 2570, y: 190, w: 24, h: 24, type: 'gem', val: 50, anim: 0 });
+
+        // Springs
+        springs.push({ x: 420, y: 480, w: 32, h: 20, bounceForce: -16.5, state: 0 });
+        springs.push({ x: 1350, y: 480, w: 32, h: 20, bounceForce: -17, state: 0 });
+        springs.push({ x: 2050, y: 480, w: 32, h: 20, bounceForce: -18, state: 0 });
+
+        // Enemies: Slimes & Flying Bats
+        enemies.push({ x: 250, y: 470, w: 32, h: 26, type: 'slime', vx: 1.3, minX: 100, maxX: 400, alive: true });
+        enemies.push({ x: 800, y: 260, w: 30, h: 24, type: 'bat', vx: 1.6, minX: 750, maxX: 980, startY: 260, anim: 0, alive: true });
+        enemies.push({ x: 1400, y: 470, w: 32, h: 26, type: 'slime', vx: -1.5, minX: 1250, maxX: 1650, alive: true });
+        enemies.push({ x: 1980, y: 220, w: 30, h: 24, type: 'bat', vx: -1.7, minX: 1850, maxX: 2150, startY: 220, anim: 0, alive: true });
+        enemies.push({ x: 2850, y: 450, w: 32, h: 26, type: 'slime', vx: 1.4, minX: 2750, maxX: 3100, alive: true });
+
+        // Exit Portal
+        portal = { x: 3150, y: 410, w: 46, h: 70, reached: false };
+
+      } else {
+        // LEVEL 3: CASTLE OF LAVA
+        worldBounds = { width: 3600, height: 680 };
+
+        // Castle Stone & Lava pits
+        platforms.push({ x: 0, y: 520, w: 450, h: 160, type: 'lava_rock' });
+        platforms.push({ x: 600, y: 520, w: 400, h: 160, type: 'lava_rock' });
+        platforms.push({ x: 1150, y: 520, w: 500, h: 160, type: 'lava_rock' });
+        platforms.push({ x: 1850, y: 520, w: 550, h: 160, type: 'lava_rock' });
+        platforms.push({ x: 2600, y: 520, w: 450, h: 160, type: 'lava_rock' });
+        platforms.push({ x: 3200, y: 480, w: 400, h: 200, type: 'lava_rock' });
+
+        // Floating lava bricks
+        platforms.push({ x: 180, y: 420, w: 110, h: 24, type: 'castle' });
+        platforms.push({ x: 340, y: 340, w: 120, h: 24, type: 'castle' });
+
+        // Horizontal moving platforms over lava
+        platforms.push({
+          x: 480, y: 420, w: 90, h: 20, type: 'moving',
+          minX: 460, maxX: 610, vx: 2.0, vy: 0
+        });
+
+        platforms.push({ x: 680, y: 400, w: 100, h: 24, type: 'castle' });
+        platforms.push({ x: 840, y: 310, w: 120, h: 24, type: 'castle' });
+
+        // Vertical moving platform
+        platforms.push({
+          x: 1020, y: 400, w: 90, h: 20, type: 'moving',
+          minY: 220, maxY: 460, vx: 0, vy: -1.8
+        });
+
+        // Castle fortress structures
+        platforms.push({ x: 1220, y: 390, w: 130, h: 24, type: 'castle' });
+        platforms.push({ x: 1420, y: 300, w: 140, h: 24, type: 'castle' });
+        platforms.push({ x: 1640, y: 220, w: 130, h: 24, type: 'castle' });
+
+        // Fast crumbling bridge
+        platforms.push({ x: 1720, y: 410, w: 80, h: 20, type: 'crumble', timer: 0, falling: false, regen: 0 });
+        platforms.push({ x: 1830, y: 350, w: 80, h: 20, type: 'crumble', timer: 0, falling: false, regen: 0 });
+
+        // Tower ascent
+        platforms.push({ x: 2050, y: 410, w: 120, h: 24, type: 'castle' });
+        platforms.push({ x: 2250, y: 320, w: 130, h: 24, type: 'castle' });
+        platforms.push({
+          x: 2450, y: 380, w: 90, h: 20, type: 'moving',
+          minX: 2420, maxX: 2620, vx: 2.2, vy: 0
+        });
+
+        platforms.push({ x: 2750, y: 390, w: 120, h: 24, type: 'castle' });
+        platforms.push({ x: 2950, y: 290, w: 140, h: 24, type: 'castle' });
+
+        // Collectibles (Coins & Star Artifacts)
+        const coinsLvl3 = [
+          [210, 380], [370, 300], [520, 380],
+          [710, 360], [870, 270], [1050, 200],
+          [1260, 350], [1460, 260], [1670, 180],
+          [2080, 370], [2280, 280], [2490, 340],
+          [2780, 350], [2980, 250], [3300, 440], [3380, 440]
+        ];
+        coinsLvl3.forEach(([cx, cy]) => {
+          collectibles.push({ x: cx, y: cy, w: 20, h: 20, type: 'coin', val: 10, anim: Math.random() });
+        });
+
+        // Gems & Star
+        collectibles.push({ x: 1670, y: 140, w: 24, h: 24, type: 'star', val: 100, anim: 0 });
+        collectibles.push({ x: 2980, y: 200, w: 24, h: 24, type: 'star', val: 100, anim: 0 });
+
+        // Springs
+        springs.push({ x: 400, y: 500, w: 32, h: 20, bounceForce: -17, state: 0 });
+        springs.push({ x: 1300, y: 500, w: 32, h: 20, bounceForce: -17.5, state: 0 });
+        springs.push({ x: 2150, y: 500, w: 32, h: 20, bounceForce: -18, state: 0 });
+
+        // Enemies: Magma Slimes & Fire Bats
+        enemies.push({ x: 250, y: 490, w: 32, h: 26, type: 'slime', vx: 1.5, minX: 100, maxX: 380, alive: true, isFire: true });
+        enemies.push({ x: 750, y: 490, w: 32, h: 26, type: 'slime', vx: -1.6, minX: 650, maxX: 950, alive: true, isFire: true });
+        enemies.push({ x: 1350, y: 240, w: 30, h: 24, type: 'bat', vx: 1.8, minX: 1250, maxX: 1550, startY: 240, anim: 0, alive: true });
+        enemies.push({ x: 2100, y: 490, w: 32, h: 26, type: 'slime', vx: 1.5, minX: 1950, maxX: 2350, alive: true, isFire: true });
+        enemies.push({ x: 2800, y: 220, w: 30, h: 24, type: 'bat', vx: -1.9, minX: 2700, maxX: 3050, startY: 220, anim: 0, alive: true });
+
+        // Exit Portal
+        portal = { x: 3450, y: 410, w: 46, h: 70, reached: false };
       }
 
-      function checkPlatformCollisions(horizontal) {
-        platforms.forEach(plat => {
-          // If crumble platform is falling far away, skip
-          if (plat.type === 'crumble' && plat.timer > 20) return;
+      appInstance.totalLevelCoins = collectibles.filter(c => c.type === 'coin').length;
+    }
 
-          if (
-            player.x + player.w > plat.x &&
-            player.x < plat.x + plat.w &&
-            player.y + player.h > plat.y &&
-            player.y < plat.y + plat.h
-          ) {
-            if (horizontal) {
-              // Wall collision
-              if (player.vx > 0) {
-                player.x = plat.x - player.w;
-              } else if (player.vx < 0) {
-                player.x = plat.x + plat.w;
-              }
-              player.vx = 0;
-            } else {
-              // Vertical collision
-              if (player.vy > 0) {
-                // Landing on platform
-                player.y = plat.y - player.h;
-                player.vy = 0;
-                player.isGrounded = true;
+    function handlePlayerJump() {
+      if (!player || appInstance.screen !== 'playing') return;
 
-                // Trigger crumble if it's crumble platform
-                if (plat.type === 'crumble' && !plat.falling) {
-                  plat.falling = true;
-                  plat.originY = plat.y;
-                }
-              } else if (player.vy < 0) {
-                // Hitting head
-                player.y = plat.y + plat.h;
-                player.vy = 0;
-              }
-            }
-          }
+      // Grounded jump or coyote jump
+      if (player.isGrounded || player.coyoteTime > 0) {
+        player.vy = player.jumpForce;
+        player.isGrounded = false;
+        player.coyoteTime = 0;
+        player.squashY = 1.35;
+        player.stretchX = 0.75;
+        audio.jump();
+        createDustParticles(player.x + player.w / 2, player.y + player.h, '#ffffff');
+        return;
+      }
+
+      // Double jump if allowed
+      if (player.jumpsLeft > 1) {
+        player.vy = player.jumpForce * 0.95;
+        player.jumpsLeft--;
+        player.squashY = 1.3;
+        player.stretchX = 0.8;
+        audio.doubleJump();
+        createDustParticles(player.x + player.w / 2, player.y + player.h, '#c084fc');
+      } else {
+        // Jump buffer
+        player.jumpBuffer = 8;
+      }
+    }
+
+    function handlePlayerDash() {
+      if (!player || appInstance.screen !== 'playing') return;
+      if (player.dashCooldown <= 0) {
+        player.dashTimer = 12; // 12 frames of dash
+        player.dashCooldown = 60; // 1 second cooldown
+        const dir = player.facingRight ? 1 : -1;
+        player.vx = dir * 12;
+        player.vy = 0;
+        audio.dash();
+
+        // Create dash ghost particles
+        for (let i = 0; i < 5; i++) {
+          particles.push({
+            x: player.x + Math.random() * 10 - 5,
+            y: player.y + Math.random() * 10,
+            vx: -dir * (Math.random() * 2 + 1),
+            vy: (Math.random() - 0.5) * 2,
+            life: 18,
+            maxLife: 18,
+            color: '#38bdf8',
+            size: 4
+          });
+        }
+      }
+    }
+
+    function createDustParticles(x, y, color = '#cbd5e1') {
+      for (let i = 0; i < 6; i++) {
+        particles.push({
+          x: x + (Math.random() - 0.5) * 16,
+          y: y - 2,
+          vx: (Math.random() - 0.5) * 3,
+          vy: -Math.random() * 2.2 - 0.5,
+          life: 16,
+          maxLife: 16,
+          color: color,
+          size: Math.random() * 3 + 2
         });
       }
+    }
 
-      // ==========================================
-      // CANVAS RENDERING & PIXEL ART GRAPHICS
-      // ==========================================
-      function renderGameCanvas() {
-        if (!ctx) return;
+    function createBurstParticles(x, y, count = 12, color = '#facc15') {
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.4);
+        const speed = Math.random() * 4 + 2;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 25,
+          maxLife: 25,
+          color: color,
+          size: Math.random() * 3.5 + 2.5
+        });
+      }
+    }
 
-        // Clear canvas
-        ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
+    function hurtPlayer(damage = 1, reason = 'Kamu terkena musuh!') {
+      if (!player || player.invulnerableTimer > 0) return;
 
-        // Draw Parallax Sky Background
-        renderBackground();
+      appInstance.lives -= damage;
+      audio.hit();
+      player.invulnerableTimer = 60; // 1 second invulnerability
+      player.vy = -7;
+      player.vx = player.facingRight ? -4 : 4;
+      createBurstParticles(player.x + player.w / 2, player.y + player.h / 2, 10, '#ef4444');
 
-        ctx.save();
-        ctx.translate(-Math.floor(camera.x), -Math.floor(camera.y));
+      if (appInstance.lives <= 0) {
+        appInstance.onGameOver(reason);
+      }
+    }
 
-        // Draw Platforms
-        renderPlatforms();
+    // Main Game Loop (60 FPS)
+    function gameLoop(now) {
+      animFrameId = requestAnimationFrame(gameLoop);
 
-        // Draw Springs
-        renderSprings();
+      // Calculate delta time
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
 
-        // Draw Collectibles
-        renderCollectibles();
-
-        // Draw Portal
-        renderPortal();
-
-        // Draw Enemies
-        renderEnemies();
-
-        // Draw Player
-        renderPlayer();
-
-        // Draw Particles
-        renderParticles();
-
-        ctx.restore();
+      if (appInstance.screen === 'playing') {
+        updateGamePhysics();
       }
 
-      function renderBackground() {
-        // Gradient sky depending on level
-        const grad = ctx.createLinearGradient(0, 0, 0, V_HEIGHT);
-        if (appInstance.currentLevel === 1) {
-          grad.addColorStop(0, '#0c4a6e');
-          grad.addColorStop(0.5, '#0284c7');
-          grad.addColorStop(1, '#38bdf8');
-        } else if (appInstance.currentLevel === 2) {
-          grad.addColorStop(0, '#0f172a');
-          grad.addColorStop(0.5, '#312e81');
-          grad.addColorStop(1, '#6366f1');
+      renderGameCanvas();
+    }
+
+    function updateGamePhysics() {
+      if (!player) return;
+
+      // Invulnerability countdown
+      if (player.invulnerableTimer > 0) player.invulnerableTimer--;
+
+      // Dash cooldown & active dash
+      if (player.dashCooldown > 0) player.dashCooldown--;
+
+      if (player.dashTimer > 0) {
+        player.dashTimer--;
+        player.x += player.vx;
+        // Spawn trail
+        if (Math.random() > 0.3) {
+          particles.push({
+            x: player.x,
+            y: player.y,
+            vx: 0,
+            vy: 0,
+            life: 10,
+            maxLife: 10,
+            color: '#06b6d4',
+            size: 5
+          });
+        }
+      } else {
+        // Standard horizontal movement
+        const moveLeft = gameKeys['ArrowLeft'];
+        const moveRight = gameKeys['ArrowRight'];
+
+        if (moveLeft) {
+          player.vx = -player.speed;
+          player.facingRight = false;
+        } else if (moveRight) {
+          player.vx = player.speed;
+          player.facingRight = true;
         } else {
-          grad.addColorStop(0, '#180808');
-          grad.addColorStop(0.5, '#450a0a');
-          grad.addColorStop(1, '#991b1b');
+          // Friction
+          player.vx *= 0.75;
+          if (Math.abs(player.vx) < 0.1) player.vx = 0;
         }
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
 
-        // Distant parallax mountains/clouds
-        ctx.save();
-        const p1 = (camera.x * 0.15) % V_WIDTH;
-        ctx.fillStyle = appInstance.currentLevel === 3 ? 'rgba(30, 10, 10, 0.4)' : 'rgba(255, 255, 255, 0.15)';
-        
-        // Cloud silhouettes
-        for (let i = 0; i < 3; i++) {
-          const cx = i * 400 - p1;
-          ctx.beginPath();
-          ctx.arc(cx + 80, 120, 45, 0, Math.PI * 2);
-          ctx.arc(cx + 130, 110, 60, 0, Math.PI * 2);
-          ctx.arc(cx + 180, 125, 40, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
+        // Apply Gravity
+        player.vy += GRAVITY;
+        if (player.vy > 14) player.vy = 14; // Terminal velocity
       }
 
-      function renderPlatforms() {
-        platforms.forEach(plat => {
-          // Viewport culling
-          if (
-            plat.x + plat.w < camera.x - 50 ||
-            plat.x > camera.x + V_WIDTH + 50 ||
-            plat.y + plat.h < camera.y - 50 ||
-            plat.y > camera.y + V_HEIGHT + 50
-          ) return;
+      // Squash & stretch recovery
+      player.squashY += (1 - player.squashY) * 0.15;
+      player.stretchX += (1 - player.stretchX) * 0.15;
 
-          ctx.save();
-          if (plat.type === 'grass') {
-            // Earth block with vibrant green top
-            ctx.fillStyle = '#78350f'; // Dirt
-            ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+      // Move horizontally and check collisions
+      player.x += player.vx;
+      checkPlatformCollisions(true);
 
-            // Grass top layer
-            ctx.fillStyle = '#22c55e';
-            ctx.fillRect(plat.x, plat.y, plat.w, 14);
+      // Move vertically and check collisions
+      player.isGrounded = false;
+      player.y += player.vy;
+      checkPlatformCollisions(false);
 
-            // Grass jagged blade fringes
-            ctx.fillStyle = '#16a34a';
-            for (let bx = plat.x; bx < plat.x + plat.w; bx += 14) {
-              ctx.beginPath();
-              ctx.moveTo(bx, plat.y + 14);
-              ctx.lineTo(bx + 7, plat.y + 20);
-              ctx.lineTo(bx + 14, plat.y + 14);
-              ctx.fill();
+      // Coyote time & Jump buffer
+      if (player.isGrounded) {
+        player.coyoteTime = 8;
+        player.jumpsLeft = player.maxJumps;
+      } else if (player.coyoteTime > 0) {
+        player.coyoteTime--;
+      }
+
+      if (player.jumpBuffer > 0) {
+        player.jumpBuffer--;
+        if (player.isGrounded) {
+          handlePlayerJump();
+        }
+      }
+
+      // Update moving & crumbling platforms
+      platforms.forEach(plat => {
+        if (plat.type === 'moving') {
+          if (plat.vx) {
+            plat.x += plat.vx;
+            if (plat.x <= plat.minX || plat.x >= plat.maxX) plat.vx *= -1;
+          }
+          if (plat.vy) {
+            plat.y += plat.vy;
+            if (plat.y <= plat.minY || plat.y >= plat.maxY) plat.vy *= -1;
+          }
+        } else if (plat.type === 'crumble') {
+          if (plat.falling) {
+            plat.timer++;
+            if (plat.timer > 20) {
+              plat.y += 6; // Falls downward
             }
-
-          } else if (plat.type === 'wood') {
-            // Wooden plank platform
-            ctx.fillStyle = '#92400e';
-            ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-            ctx.fillStyle = '#b45309';
-            ctx.fillRect(plat.x + 2, plat.y + 2, plat.w - 4, 6);
-            ctx.strokeStyle = '#78350f';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
-
-          } else if (plat.type === 'crystal' || plat.type === 'crystal_rock') {
-            // Glowing neon crystal platform
-            ctx.fillStyle = '#1e1b4b';
-            ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-            ctx.fillStyle = '#818cf8';
-            ctx.fillRect(plat.x, plat.y, plat.w, 10);
-            ctx.strokeStyle = '#a5b4fc';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
-
-          } else if (plat.type === 'lava_rock' || plat.type === 'castle') {
-            // Dark obsidian with red molten rim
-            ctx.fillStyle = '#1c1917';
-            ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-            ctx.fillStyle = '#ea580c';
-            ctx.fillRect(plat.x, plat.y, plat.w, 8);
-            ctx.fillStyle = '#f97316';
-            ctx.fillRect(plat.x, plat.y + 2, plat.w, 3);
-            ctx.strokeStyle = '#b91c1c';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
-
-          } else if (plat.type === 'moving') {
-            // Metallic sci-fi moving platform
-            ctx.fillStyle = '#334155';
-            ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-            ctx.fillStyle = '#38bdf8';
-            ctx.fillRect(plat.x + 4, plat.y + 3, plat.w - 8, 4);
-            ctx.strokeStyle = '#0284c7';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
-
-          } else if (plat.type === 'crumble') {
-            // Crumbling block with shaking effect if active
-            const shake = plat.falling && plat.timer < 20 ? (Math.random() - 0.5) * 4 : 0;
-            ctx.fillStyle = '#e2e8f0';
-            ctx.fillRect(plat.x + shake, plat.y, plat.w, plat.h);
-            ctx.strokeStyle = '#94a3b8';
-            ctx.strokeRect(plat.x + shake, plat.y, plat.w, plat.h);
+            if (plat.timer > 90) {
+              // Regenerate
+              plat.y = plat.originY || plat.y;
+              plat.falling = false;
+              plat.timer = 0;
+            }
           }
-          ctx.restore();
-        });
-      }
+        }
+      });
 
-      function renderSprings() {
-        springs.forEach(spr => {
-          ctx.save();
-          const compress = spr.state > 0 ? 8 : 0;
-          ctx.fillStyle = '#e11d48';
-          ctx.fillRect(spr.x, spr.y + compress, spr.w, spr.h - compress);
-          ctx.fillStyle = '#f43f5e';
-          ctx.fillRect(spr.x - 2, spr.y + compress, spr.w + 4, 6);
-          ctx.restore();
-        });
-      }
+      // Update Springs
+      springs.forEach(spr => {
+        if (spr.state > 0) spr.state--;
+        // Collision with player
+        if (
+          player.x + player.w > spr.x &&
+          player.x < spr.x + spr.w &&
+          player.y + player.h >= spr.y &&
+          player.y + player.h <= spr.y + spr.h + 10 &&
+          player.vy > 0
+        ) {
+          player.vy = spr.bounceForce;
+          player.y = spr.y - player.h;
+          player.isGrounded = false;
+          player.squashY = 1.45;
+          player.stretchX = 0.65;
+          spr.state = 15;
+          audio.spring();
+          createBurstParticles(spr.x + spr.w / 2, spr.y, 8, '#38bdf8');
+        }
+      });
 
-      function renderCollectibles() {
-        collectibles.forEach(item => {
-          ctx.save();
-          const bob = Math.sin(item.anim * 3) * 4;
-          const cx = item.x + item.w / 2;
-          const cy = item.y + item.h / 2 + bob;
+      // Update Collectibles (Coins & Gems with magnetic attraction)
+      collectibles.forEach((item, index) => {
+        item.anim = (item.anim || 0) + 0.05;
+        const cx = item.x + item.w / 2;
+        const cy = item.y + item.h / 2;
+        const px = player.x + player.w / 2;
+        const py = player.y + player.h / 2;
+        const dist = Math.hypot(px - cx, py - cy);
 
+        // Magnetic pull towards player
+        if (dist < player.magnetRange && item.type !== 'heart') {
+          item.x += (px - cx) * 0.12;
+          item.y += (py - cy) * 0.12;
+        }
+
+        // Pickup collision
+        if (dist < 26) {
           if (item.type === 'coin') {
-            // Shiny rotating gold coin
-            ctx.fillStyle = '#facc15';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 9, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#ca8a04';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#fef08a';
-            ctx.font = 'bold 9px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('$', cx, cy);
-
-          } else if (item.type === 'gem') {
-            // Cyan crystal diamond
-            ctx.fillStyle = '#06b6d4';
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - 11);
-            ctx.lineTo(cx + 10, cy);
-            ctx.lineTo(cx, cy + 11);
-            ctx.lineTo(cx - 10, cy);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillStyle = '#67e8f9';
-            ctx.fillRect(cx - 3, cy - 3, 6, 6);
-
-          } else if (item.type === 'star') {
-            // Golden star artifact
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = '22px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('⭐', cx, cy);
-
+            appInstance.coins++;
+            appInstance.score += item.val;
+            audio.coin();
+            createBurstParticles(cx, cy, 8, '#facc15');
+          } else if (item.type === 'gem' || item.type === 'star') {
+            appInstance.score += item.val;
+            audio.gem();
+            createBurstParticles(cx, cy, 14, '#38bdf8');
           } else if (item.type === 'heart') {
-            // Floating red heart item
-            ctx.font = '20px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('❤️', cx, cy);
+            if (appInstance.lives < appInstance.maxLives) {
+              appInstance.lives++;
+            }
+            appInstance.score += 50;
+            audio.coin();
+            createBurstParticles(cx, cy, 12, '#ef4444');
           }
-          ctx.restore();
-        });
-      }
+          collectibles.splice(index, 1);
+        }
+      });
 
-      function renderPortal() {
-        if (!portal) return;
-        ctx.save();
-        const time = performance.now() * 0.003;
-        const cx = portal.x + portal.w / 2;
-        const cy = portal.y + portal.h / 2;
+      // Update Enemies
+      enemies.forEach((enemy, index) => {
+        if (!enemy.alive) return;
 
-        // Outer aura rings
-        for (let r = 3; r >= 1; r--) {
-          ctx.beginPath();
-          ctx.ellipse(cx, cy, portal.w / 2 + r * 5, portal.h / 2 + r * 5, Math.sin(time) * 0.1, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(56, 189, 248, ${0.15 * (4 - r)})`;
-          ctx.fill();
+        if (enemy.type === 'slime') {
+          enemy.x += enemy.vx;
+          if (enemy.x <= enemy.minX || enemy.x >= enemy.maxX) {
+            enemy.vx *= -1;
+          }
+        } else if (enemy.type === 'bat') {
+          enemy.anim += 0.08;
+          enemy.x += enemy.vx;
+          enemy.y = enemy.startY + Math.sin(enemy.anim) * 25;
+          if (enemy.x <= enemy.minX || enemy.x >= enemy.maxX) {
+            enemy.vx *= -1;
+          }
         }
 
-        // Main swirling core
-        const grad = ctx.createRadialGradient(cx, cy, 4, cx, cy, portal.w / 2);
-        grad.addColorStop(0, '#ffffff');
-        grad.addColorStop(0.4, '#38bdf8');
-        grad.addColorStop(0.8, '#818cf8');
-        grad.addColorStop(1, '#4f46e5');
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, portal.w / 2, portal.h / 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Portal frame pillars
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(portal.x - 8, portal.y + 10, 8, portal.h);
-        ctx.fillRect(portal.x + portal.w, portal.y + 10, 8, portal.h);
-
-        ctx.restore();
-      }
-
-      function renderEnemies() {
-        enemies.forEach(enemy => {
-          if (!enemy.alive) return;
-          ctx.save();
-          const cx = enemy.x + enemy.w / 2;
-          const cy = enemy.y + enemy.h / 2;
-
-          if (enemy.type === 'slime') {
-            // Cute bouncy slime
-            const squish = Math.sin(performance.now() * 0.01) * 2;
-            ctx.fillStyle = enemy.isFire ? '#f97316' : '#22c55e';
-            ctx.beginPath();
-            ctx.ellipse(cx, cy + squish/2, enemy.w / 2, (enemy.h / 2) - squish/2, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Eyes
-            const eyeDir = enemy.vx > 0 ? 2 : -2;
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(cx - 5 + eyeDir, cy - 2, 4, 0, Math.PI * 2);
-            ctx.arc(cx + 5 + eyeDir, cy - 2, 4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#0f172a';
-            ctx.beginPath();
-            ctx.arc(cx - 5 + eyeDir * 1.5, cy - 2, 2, 0, Math.PI * 2);
-            ctx.arc(cx + 5 + eyeDir * 1.5, cy - 2, 2, 0, Math.PI * 2);
-            ctx.fill();
-
-          } else if (enemy.type === 'bat') {
-            // Flying bat with wing flapping
-            const wingFlap = Math.sin(performance.now() * 0.02) * 8;
-            ctx.fillStyle = '#7c3aed';
-            
-            // Body
-            ctx.beginPath();
-            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Wings
-            ctx.beginPath();
-            ctx.moveTo(cx - 6, cy);
-            ctx.lineTo(cx - 18, cy - wingFlap);
-            ctx.lineTo(cx - 6, cy + 4);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.moveTo(cx + 6, cy);
-            ctx.lineTo(cx + 18, cy - wingFlap);
-            ctx.lineTo(cx + 6, cy + 4);
-            ctx.fill();
-
-            // Red glowing eyes
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(cx - 4, cy - 2, 2, 2);
-            ctx.fillRect(cx + 2, cy - 2, 2, 2);
+        // Collision with Player
+        if (
+          player.x + player.w > enemy.x &&
+          player.x < enemy.x + enemy.w &&
+          player.y + player.h > enemy.y &&
+          player.y < enemy.y + enemy.h
+        ) {
+          // Check if player is falling on top to STOMP enemy!
+          if (player.vy > 0 && (player.y + player.h - player.vy) <= enemy.y + 12) {
+            // Stomp success!
+            enemy.alive = false;
+            player.vy = -9.5; // Rebound bounce
+            player.squashY = 1.3;
+            appInstance.score += 100;
+            audio.stomp();
+            createBurstParticles(enemy.x + enemy.w / 2, enemy.y + enemy.h / 2, 14, enemy.isFire ? '#f97316' : '#22c55e');
+          } else {
+            // Player takes damage
+            hurtPlayer(1, enemy.isFire ? 'Terbakar oleh monster api!' : 'Diserang monster!');
           }
-          ctx.restore();
-        });
+        }
+      });
+
+      // Check Exit Portal
+      if (portal && !portal.reached) {
+        const pcx = portal.x + portal.w / 2;
+        const pcy = portal.y + portal.h / 2;
+        const plx = player.x + player.w / 2;
+        const ply = player.y + player.h / 2;
+        if (Math.hypot(plx - pcx, ply - pcy) < 40) {
+          portal.reached = true;
+          createBurstParticles(pcx, pcy, 30, '#38bdf8');
+          createBurstParticles(pcx, pcy, 20, '#facc15');
+          setTimeout(() => {
+            appInstance.onLevelWin();
+          }, 600);
+        }
       }
 
-      function renderPlayer() {
-        if (!player) return;
-        ctx.save();
+      // Check falling into void / pit
+      if (player.y > worldBounds.height + 40) {
+        hurtPlayer(3, 'Kamu terjatuh ke jurang tak berdasar!');
+      }
 
-        // Invulnerable blinking effect
-        if (player.invulnerableTimer > 0 && Math.floor(player.invulnerableTimer / 4) % 2 === 0) {
-          ctx.globalAlpha = 0.4;
+      // Update Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.12; // Slight gravity for dust
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+
+      // Smooth Camera Follow
+      const targetCamX = player.x - V_WIDTH / 3;
+      const targetCamY = player.y - V_HEIGHT / 2;
+      camera.x += (targetCamX - camera.x) * 0.1;
+      camera.y += (targetCamY - camera.y) * 0.08;
+
+      // Clamp camera within world bounds
+      camera.x = Math.max(0, Math.min(camera.x, worldBounds.width - V_WIDTH));
+      camera.y = Math.max(-50, Math.min(camera.y, worldBounds.height - V_HEIGHT + 60));
+    }
+
+    function checkPlatformCollisions(horizontal) {
+      platforms.forEach(plat => {
+        // If crumble platform is falling far away, skip
+        if (plat.type === 'crumble' && plat.timer > 20) return;
+
+        if (
+          player.x + player.w > plat.x &&
+          player.x < plat.x + plat.w &&
+          player.y + player.h > plat.y &&
+          player.y < plat.y + plat.h
+        ) {
+          if (horizontal) {
+            // Wall collision
+            if (player.vx > 0) {
+              player.x = plat.x - player.w;
+            } else if (player.vx < 0) {
+              player.x = plat.x + plat.w;
+            }
+            player.vx = 0;
+          } else {
+            // Vertical collision
+            if (player.vy > 0) {
+              // Landing on platform
+              player.y = plat.y - player.h;
+              player.vy = 0;
+              player.isGrounded = true;
+
+              // Trigger crumble if it's crumble platform
+              if (plat.type === 'crumble' && !plat.falling) {
+                plat.falling = true;
+                plat.originY = plat.y;
+              }
+            } else if (player.vy < 0) {
+              // Hitting head
+              player.y = plat.y + plat.h;
+              player.vy = 0;
+            }
+          }
         }
+      });
+    }
 
-        const cx = player.x + player.w / 2;
-        const cy = player.y + player.h / 2;
+    // ==========================================
+    // CANVAS RENDERING & PIXEL ART GRAPHICS
+    // ==========================================
+    function renderGameCanvas() {
+      if (!ctx) return;
 
-        ctx.translate(cx, cy);
-        ctx.scale(player.stretchX * (player.facingRight ? 1 : -1), player.squashY);
+      // Clear canvas
+      ctx.clearRect(0, 0, V_WIDTH, V_HEIGHT);
 
-        // Character Body Base
-        ctx.fillStyle = player.color;
-        const bw = player.w;
-        const bh = player.h;
+      // Draw Parallax Sky Background
+      renderBackground();
 
-        // Rounded body
+      ctx.save();
+      ctx.translate(-Math.floor(camera.x), -Math.floor(camera.y));
+
+      // Draw Platforms
+      renderPlatforms();
+
+      // Draw Springs
+      renderSprings();
+
+      // Draw Collectibles
+      renderCollectibles();
+
+      // Draw Portal
+      renderPortal();
+
+      // Draw Enemies
+      renderEnemies();
+
+      // Draw Player
+      renderPlayer();
+
+      // Draw Particles
+      renderParticles();
+
+      ctx.restore();
+    }
+
+    function renderBackground() {
+      // Gradient sky depending on level
+      const grad = ctx.createLinearGradient(0, 0, 0, V_HEIGHT);
+      if (appInstance.currentLevel === 1) {
+        grad.addColorStop(0, '#0c4a6e');
+        grad.addColorStop(0.5, '#0284c7');
+        grad.addColorStop(1, '#38bdf8');
+      } else if (appInstance.currentLevel === 2) {
+        grad.addColorStop(0, '#0f172a');
+        grad.addColorStop(0.5, '#312e81');
+        grad.addColorStop(1, '#6366f1');
+      } else {
+        grad.addColorStop(0, '#180808');
+        grad.addColorStop(0.5, '#450a0a');
+        grad.addColorStop(1, '#991b1b');
+      }
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
+
+      // Distant parallax mountains/clouds
+      ctx.save();
+      const p1 = (camera.x * 0.15) % V_WIDTH;
+      ctx.fillStyle = appInstance.currentLevel === 3 ? 'rgba(30, 10, 10, 0.4)' : 'rgba(255, 255, 255, 0.15)';
+
+      // Cloud silhouettes
+      for (let i = 0; i < 3; i++) {
+        const cx = i * 400 - p1;
         ctx.beginPath();
-        ctx.roundRect(-bw / 2, -bh / 2, bw, bh, 8);
+        ctx.arc(cx + 80, 120, 45, 0, Math.PI * 2);
+        ctx.arc(cx + 130, 110, 60, 0, Math.PI * 2);
+        ctx.arc(cx + 180, 125, 40, 0, Math.PI * 2);
         ctx.fill();
+      }
+      ctx.restore();
+    }
 
-        // Inner belly / suit accent
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.beginPath();
-        ctx.roundRect(-bw / 2 + 5, -bh / 2 + 14, bw - 10, bh - 18, 5);
-        ctx.fill();
+    function renderPlatforms() {
+      platforms.forEach(plat => {
+        // Viewport culling
+        if (
+          plat.x + plat.w < camera.x - 50 ||
+          plat.x > camera.x + V_WIDTH + 50 ||
+          plat.y + plat.h < camera.y - 50 ||
+          plat.y > camera.y + V_HEIGHT + 50
+        ) return;
 
-        // Headgear / Character Specific Accessories
-        if (player.heroId === 'leo') {
-          // Adventurer explorer hat
-          ctx.fillStyle = '#b45309';
-          ctx.fillRect(-bw / 2 - 4, -bh / 2 - 3, bw + 8, 5);
-          ctx.fillRect(-bw / 2 + 2, -bh / 2 - 9, bw - 4, 7);
-        } else if (player.heroId === 'zara') {
-          // Ninja headband with flowing tail
-          ctx.fillStyle = '#e11d48';
-          ctx.fillRect(-bw / 2 - 2, -bh / 2 + 4, bw + 4, 6);
-          // Tail
-          ctx.fillRect(-bw / 2 - 8, -bh / 2 + 6, 8, 4);
-        } else if (player.heroId === 'toby') {
-          // Robot antenna
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillRect(-2, -bh / 2 - 8, 4, 8);
+        ctx.save();
+        if (plat.type === 'grass') {
+          // Earth block with vibrant green top
+          ctx.fillStyle = '#78350f'; // Dirt
+          ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+
+          // Grass top layer
           ctx.fillStyle = '#22c55e';
-          ctx.beginPath();
-          ctx.arc(0, -bh / 2 - 9, 3, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillRect(plat.x, plat.y, plat.w, 14);
+
+          // Grass jagged blade fringes
+          ctx.fillStyle = '#16a34a';
+          for (let bx = plat.x; bx < plat.x + plat.w; bx += 14) {
+            ctx.beginPath();
+            ctx.moveTo(bx, plat.y + 14);
+            ctx.lineTo(bx + 7, plat.y + 20);
+            ctx.lineTo(bx + 14, plat.y + 14);
+            ctx.fill();
+          }
+
+        } else if (plat.type === 'wood') {
+          // Wooden plank platform
+          ctx.fillStyle = '#92400e';
+          ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+          ctx.fillStyle = '#b45309';
+          ctx.fillRect(plat.x + 2, plat.y + 2, plat.w - 4, 6);
+          ctx.strokeStyle = '#78350f';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
+
+        } else if (plat.type === 'crystal' || plat.type === 'crystal_rock') {
+          // Glowing neon crystal platform
+          ctx.fillStyle = '#1e1b4b';
+          ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+          ctx.fillStyle = '#818cf8';
+          ctx.fillRect(plat.x, plat.y, plat.w, 10);
+          ctx.strokeStyle = '#a5b4fc';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
+
+        } else if (plat.type === 'lava_rock' || plat.type === 'castle') {
+          // Dark obsidian with red molten rim
+          ctx.fillStyle = '#1c1917';
+          ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+          ctx.fillStyle = '#ea580c';
+          ctx.fillRect(plat.x, plat.y, plat.w, 8);
+          ctx.fillStyle = '#f97316';
+          ctx.fillRect(plat.x, plat.y + 2, plat.w, 3);
+          ctx.strokeStyle = '#b91c1c';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
+
+        } else if (plat.type === 'moving') {
+          // Metallic sci-fi moving platform
+          ctx.fillStyle = '#334155';
+          ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(plat.x + 4, plat.y + 3, plat.w - 8, 4);
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(plat.x, plat.y, plat.w, plat.h);
+
+        } else if (plat.type === 'crumble') {
+          // Crumbling block with shaking effect if active
+          const shake = plat.falling && plat.timer < 20 ? (Math.random() - 0.5) * 4 : 0;
+          ctx.fillStyle = '#e2e8f0';
+          ctx.fillRect(plat.x + shake, plat.y, plat.w, plat.h);
+          ctx.strokeStyle = '#94a3b8';
+          ctx.strokeRect(plat.x + shake, plat.y, plat.w, plat.h);
         }
-
-        // Eyes (looking forward)
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(2, -bh / 2 + 8, 6, 8);
-        ctx.fillRect(-8, -bh / 2 + 8, 5, 8);
-
-        // Pupils
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(5, -bh / 2 + 10, 3, 5);
-        ctx.fillRect(-5, -bh / 2 + 10, 3, 5);
-
-        // Running leg animation
-        if (Math.abs(player.vx) > 0.5 && player.isGrounded) {
-          const legPhase = Math.sin(performance.now() * 0.02) * 6;
-          ctx.fillStyle = '#1e293b';
-          ctx.fillRect(-bw / 2 + 4 + legPhase, bh / 2 - 5, 6, 7);
-          ctx.fillRect(bw / 2 - 10 - legPhase, bh / 2 - 5, 6, 7);
-        }
-
         ctx.restore();
+      });
+    }
+
+    function renderSprings() {
+      springs.forEach(spr => {
+        ctx.save();
+        const compress = spr.state > 0 ? 8 : 0;
+        ctx.fillStyle = '#e11d48';
+        ctx.fillRect(spr.x, spr.y + compress, spr.w, spr.h - compress);
+        ctx.fillStyle = '#f43f5e';
+        ctx.fillRect(spr.x - 2, spr.y + compress, spr.w + 4, 6);
+        ctx.restore();
+      });
+    }
+
+    function renderCollectibles() {
+      collectibles.forEach(item => {
+        ctx.save();
+        const bob = Math.sin(item.anim * 3) * 4;
+        const cx = item.x + item.w / 2;
+        const cy = item.y + item.h / 2 + bob;
+
+        if (item.type === 'coin') {
+          // Shiny rotating gold coin
+          ctx.fillStyle = '#facc15';
+          ctx.beginPath();
+          ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#ca8a04';
+          ctx.beginPath();
+          ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#fef08a';
+          ctx.font = 'bold 9px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('$', cx, cy);
+
+        } else if (item.type === 'gem') {
+          // Cyan crystal diamond
+          ctx.fillStyle = '#06b6d4';
+          ctx.beginPath();
+          ctx.moveTo(cx, cy - 11);
+          ctx.lineTo(cx + 10, cy);
+          ctx.lineTo(cx, cy + 11);
+          ctx.lineTo(cx - 10, cy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#67e8f9';
+          ctx.fillRect(cx - 3, cy - 3, 6, 6);
+
+        } else if (item.type === 'star') {
+          // Golden star artifact
+          ctx.fillStyle = '#fbbf24';
+          ctx.font = '22px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('⭐', cx, cy);
+
+        } else if (item.type === 'heart') {
+          // Floating red heart item
+          ctx.font = '20px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('❤️', cx, cy);
+        }
+        ctx.restore();
+      });
+    }
+
+    function renderPortal() {
+      if (!portal) return;
+      ctx.save();
+      const time = performance.now() * 0.003;
+      const cx = portal.x + portal.w / 2;
+      const cy = portal.y + portal.h / 2;
+
+      // Outer aura rings
+      for (let r = 3; r >= 1; r--) {
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, portal.w / 2 + r * 5, portal.h / 2 + r * 5, Math.sin(time) * 0.1, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(56, 189, 248, ${0.15 * (4 - r)})`;
+        ctx.fill();
       }
 
-      function renderParticles() {
-        particles.forEach(p => {
-          ctx.save();
-          ctx.globalAlpha = p.life / p.maxLife;
-          ctx.fillStyle = p.color;
+      // Main swirling core
+      const grad = ctx.createRadialGradient(cx, cy, 4, cx, cy, portal.w / 2);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.4, '#38bdf8');
+      grad.addColorStop(0.8, '#818cf8');
+      grad.addColorStop(1, '#4f46e5');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, portal.w / 2, portal.h / 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Portal frame pillars
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(portal.x - 8, portal.y + 10, 8, portal.h);
+      ctx.fillRect(portal.x + portal.w, portal.y + 10, 8, portal.h);
+
+      ctx.restore();
+    }
+
+    function renderEnemies() {
+      enemies.forEach(enemy => {
+        if (!enemy.alive) return;
+        ctx.save();
+        const cx = enemy.x + enemy.w / 2;
+        const cy = enemy.y + enemy.h / 2;
+
+        if (enemy.type === 'slime') {
+          // Cute bouncy slime
+          const squish = Math.sin(performance.now() * 0.01) * 2;
+          ctx.fillStyle = enemy.isFire ? '#f97316' : '#22c55e';
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.ellipse(cx, cy + squish / 2, enemy.w / 2, (enemy.h / 2) - squish / 2, 0, 0, Math.PI * 2);
           ctx.fill();
-          ctx.restore();
-        });
+
+          // Eyes
+          const eyeDir = enemy.vx > 0 ? 2 : -2;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(cx - 5 + eyeDir, cy - 2, 4, 0, Math.PI * 2);
+          ctx.arc(cx + 5 + eyeDir, cy - 2, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.arc(cx - 5 + eyeDir * 1.5, cy - 2, 2, 0, Math.PI * 2);
+          ctx.arc(cx + 5 + eyeDir * 1.5, cy - 2, 2, 0, Math.PI * 2);
+          ctx.fill();
+
+        } else if (enemy.type === 'bat') {
+          // Flying bat with wing flapping
+          const wingFlap = Math.sin(performance.now() * 0.02) * 8;
+          ctx.fillStyle = '#7c3aed';
+
+          // Body
+          ctx.beginPath();
+          ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Wings
+          ctx.beginPath();
+          ctx.moveTo(cx - 6, cy);
+          ctx.lineTo(cx - 18, cy - wingFlap);
+          ctx.lineTo(cx - 6, cy + 4);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(cx + 6, cy);
+          ctx.lineTo(cx + 18, cy - wingFlap);
+          ctx.lineTo(cx + 6, cy + 4);
+          ctx.fill();
+
+          // Red glowing eyes
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(cx - 4, cy - 2, 2, 2);
+          ctx.fillRect(cx + 2, cy - 2, 2, 2);
+        }
+        ctx.restore();
+      });
+    }
+
+    function renderPlayer() {
+      if (!player) return;
+      ctx.save();
+
+      // Invulnerable blinking effect
+      if (player.invulnerableTimer > 0 && Math.floor(player.invulnerableTimer / 4) % 2 === 0) {
+        ctx.globalAlpha = 0.4;
       }
-    </script>
-  </body>
+
+      const cx = player.x + player.w / 2;
+      const cy = player.y + player.h / 2;
+
+      ctx.translate(cx, cy);
+      ctx.scale(player.stretchX * (player.facingRight ? 1 : -1), player.squashY);
+
+      // Character Body Base
+      ctx.fillStyle = player.color;
+      const bw = player.w;
+      const bh = player.h;
+
+      // Rounded body
+      ctx.beginPath();
+      ctx.roundRect(-bw / 2, -bh / 2, bw, bh, 8);
+      ctx.fill();
+
+      // Inner belly / suit accent
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.beginPath();
+      ctx.roundRect(-bw / 2 + 5, -bh / 2 + 14, bw - 10, bh - 18, 5);
+      ctx.fill();
+
+      // Headgear / Character Specific Accessories
+      if (player.heroId === 'leo') {
+        // Adventurer explorer hat
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(-bw / 2 - 4, -bh / 2 - 3, bw + 8, 5);
+        ctx.fillRect(-bw / 2 + 2, -bh / 2 - 9, bw - 4, 7);
+      } else if (player.heroId === 'zara') {
+        // Ninja headband with flowing tail
+        ctx.fillStyle = '#e11d48';
+        ctx.fillRect(-bw / 2 - 2, -bh / 2 + 4, bw + 4, 6);
+        // Tail
+        ctx.fillRect(-bw / 2 - 8, -bh / 2 + 6, 8, 4);
+      } else if (player.heroId === 'toby') {
+        // Robot antenna
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillRect(-2, -bh / 2 - 8, 4, 8);
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.arc(0, -bh / 2 - 9, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Eyes (looking forward)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(2, -bh / 2 + 8, 6, 8);
+      ctx.fillRect(-8, -bh / 2 + 8, 5, 8);
+
+      // Pupils
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(5, -bh / 2 + 10, 3, 5);
+      ctx.fillRect(-5, -bh / 2 + 10, 3, 5);
+
+      // Running leg animation
+      if (Math.abs(player.vx) > 0.5 && player.isGrounded) {
+        const legPhase = Math.sin(performance.now() * 0.02) * 6;
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(-bw / 2 + 4 + legPhase, bh / 2 - 5, 6, 7);
+        ctx.fillRect(bw / 2 - 10 - legPhase, bh / 2 - 5, 6, 7);
+      }
+
+      ctx.restore();
+    }
+
+    function renderParticles() {
+      particles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.life / p.maxLife;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+  </script>
+</body>
+
 </html>
